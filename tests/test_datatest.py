@@ -55,6 +55,34 @@ class TestDatatestReprEntry(object):
         ]
         assert DatatestReprEntry._begin_differences(lines) == 3, 'line index 3'
 
+    def test_end_differences(self):
+        lines = [
+            '    def test_mydata(self):',
+            '        import datatest',
+            '>       datatest.validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        msg = 'First line after differences is index 6.'
+        assert DatatestReprEntry._end_differences(lines) == 6, msg
+
+        lines = [
+            '    def test_mydata(self):',
+            '        import datatest',
+            '>       datatest.validate(a, b)',
+            'E       ValidationError: invalid data (4 differences): [',
+            'E           Invalid(1),',
+            'E           Invalid(2),',
+            'E           ...',  # <- Truncation indicated with ellipsis.
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        msg = 'Should detect truncated differences, too.'
+        assert DatatestReprEntry._end_differences(lines) == 7, msg
+
     def test_toterminal(self):
         entry = DatatestReprEntry(ReprEntry(
             lines=['    def test_foo():',

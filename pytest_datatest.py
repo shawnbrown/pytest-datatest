@@ -28,6 +28,17 @@ class DatatestReprEntry(ReprEntry):
                 return index
         return None
 
+    @staticmethod
+    def _end_differences(lines):
+        """Returns index of line after ValidationError differences have
+        ended.
+        """
+        regex = re.compile('^E   \s*(?:\}|\]|\.\.\.)$')
+        for index, line in enumerate(reversed(lines)):
+            if regex.search(line) is not None:
+                return len(lines) - index
+        return None
+
     def _writelines(self, tw):
         for line in self.lines:
             red = line.startswith('E   ')
