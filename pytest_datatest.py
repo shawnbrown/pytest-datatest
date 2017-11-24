@@ -26,7 +26,7 @@ class DatatestReprEntry(ReprEntry):
         for index, line in enumerate(lines):
             if regex.search(line) is not None:
                 return index
-        return None
+        raise Exception('cannot find beginning of ValidationError differences')
 
     @staticmethod
     def _end_differences(lines):
@@ -37,7 +37,7 @@ class DatatestReprEntry(ReprEntry):
         for index, line in enumerate(reversed(lines)):
             if regex.search(line) is not None:
                 return len(lines) - index
-        return None
+        raise Exception('cannot find end of ValidationError differences')
 
     def _writelines(self, tw):
         for line in self.lines:

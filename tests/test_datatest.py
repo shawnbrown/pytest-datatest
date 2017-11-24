@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pytest
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import ReprFuncArgs
 from _pytest._code.code import ReprFileLocation
@@ -55,6 +56,9 @@ class TestDatatestReprEntry(object):
         ]
         assert DatatestReprEntry._begin_differences(lines) == 3, 'line index 3'
 
+        with pytest.raises(Exception):
+            DatatestReprEntry._begin_differences([''])
+
     def test_end_differences(self):
         lines = [
             '    def test_mydata(self):',
@@ -82,6 +86,9 @@ class TestDatatestReprEntry(object):
         ]
         msg = 'Should detect truncated differences, too.'
         assert DatatestReprEntry._end_differences(lines) == 7, msg
+
+        with pytest.raises(Exception):
+            DatatestReprEntry._end_differences([''])
 
     def test_toterminal(self):
         entry = DatatestReprEntry(ReprEntry(
