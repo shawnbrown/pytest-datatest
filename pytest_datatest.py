@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from _pytest._code.code import ReprEntry
 
 
@@ -17,6 +18,15 @@ class DatatestReprEntry(ReprEntry):
             getattr(entry, 'reprfileloc', None),
             getattr(entry, 'style', None),
         )
+
+    @staticmethod
+    def _begin_differences(lines):
+        """Returns index of line where ValidationError differences begin."""
+        regex = re.compile('^E   .+\(\d+ difference[s]?\): [\[{]$')
+        for index, line in enumerate(lines):
+            if regex.search(line) is not None:
+                return index
+        return None
 
     def _writelines(self, tw):
         for line in self.lines:

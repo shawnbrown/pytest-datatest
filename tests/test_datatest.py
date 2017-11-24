@@ -42,6 +42,19 @@ class TestDatatestReprEntry(object):
         assert wrapped.reprfileloc == original.reprfileloc
         assert wrapped.style == original.style
 
+    def test_begin_differences(self):
+        lines = [
+            '    def test_mydata(self):',
+            '        import datatest',
+            '>       datatest.validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        assert DatatestReprEntry._begin_differences(lines) == 3, 'line index 3'
+
     def test_toterminal(self):
         entry = DatatestReprEntry(ReprEntry(
             lines=['    def test_foo():',
