@@ -17,3 +17,28 @@ class DatatestReprEntry(ReprEntry):
             getattr(entry, 'reprfileloc', None),
             getattr(entry, 'style', None),
         )
+
+    def _writelines(self, tw):
+        for line in self.lines:
+            red = line.startswith('E   ')
+            tw.line(line, bold=True, red=red)
+
+    def toterminal(self, tw):
+        if self.style == 'short':
+            self.reprfileloc.toterminal(tw)
+            self._writelines(tw)  # <- Calls tw.line() method.
+            return
+
+        if self.reprfuncargs:
+            self.reprfuncargs.toterminal(tw)
+
+        self._writelines(tw)  # <- Calls tw.line() method.
+
+        if self.reprlocals:
+            tw.line('')
+            self.reprlocals.toterminal(tw)
+
+        if self.reprfileloc:
+            if self.lines:
+                tw.line('')
+            self.reprfileloc.toterminal(tw)

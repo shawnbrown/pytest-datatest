@@ -41,3 +41,29 @@ class TestDatatestReprEntry(object):
         assert wrapped.reprlocals == original.reprlocals
         assert wrapped.reprfileloc == original.reprfileloc
         assert wrapped.style == original.style
+
+    def test_toterminal(self):
+        entry = DatatestReprEntry(ReprEntry(
+            lines=['    def test_foo():',
+                   '>       assert 1 == 2',
+                   'E       assert 1 == 2'],
+            reprfuncargs=ReprFuncArgs([]),
+            reprlocals=None,
+            filelocrepr=ReprFileLocation('test_script.py', 9,
+                                         'AssertionError'),
+            style='long'
+        ))
+
+        tw = DummyTerminalWriter()
+        entry.toterminal(tw)
+
+        expected = [
+            ('    def test_foo():', {'bold': True, 'red': False}),
+            ('>       assert 1 == 2', {'bold': True, 'red': False}),
+            ('E       assert 1 == 2', {'bold': True, 'red': True}),
+            ('', {}),
+            ('test_script.py', {'bold': True, 'red': True}),
+            (':9: AssertionError', {}),
+        ]
+
+        assert tw.all_lines == expected
