@@ -40,8 +40,20 @@ class DatatestReprEntry(ReprEntry):
         raise Exception('cannot find end of ValidationError differences')
 
     def _writelines(self, tw):
-        for line in self.lines:
-            red = line.startswith('E   ')
+        """If row contains a difference item, trim the "E   " prefix
+        and indent with four spaces (but still print in red).
+        """
+        lines = list(self.lines)
+
+        begin_differences = self._begin_differences(lines)
+        end_differences = self._end_differences(lines)
+
+        for index, line in enumerate(lines):  # Trim the "E   " prefix
+            red = line.startswith('E   ')     # and adjust indent-level.
+            if begin_differences < index < end_differences:
+                line = line[1:].strip()
+                if line != ']' and line != '}':
+                    line = '    {0}'.format(line)
             tw.line(line, bold=True, red=red)
 
     def toterminal(self, tw):

@@ -91,14 +91,20 @@ class TestDatatestReprEntry(object):
             DatatestReprEntry._end_differences([''])
 
     def test_toterminal(self):
+        """Should trim leading "E   " prefix for differences but still
+        print in red.
+        """
         entry = DatatestReprEntry(ReprEntry(
-            lines=['    def test_foo():',
-                   '>       assert 1 == 2',
-                   'E       assert 1 == 2'],
+            lines=['    def test_mydata(self):',
+                   '        import datatest',
+                   '>       datatest.validate(1, 2)',
+                   'E       ValidationError: invalid data (1 difference): [',
+                   'E           Deviation(-1, 2),',
+                   'E       ]'],
             reprfuncargs=ReprFuncArgs([]),
             reprlocals=None,
-            filelocrepr=ReprFileLocation('test_script.py', 9,
-                                         'AssertionError'),
+            filelocrepr=ReprFileLocation('test_script.py', 42,
+                                         'ValidationError'),
             style='long'
         ))
 
@@ -106,12 +112,16 @@ class TestDatatestReprEntry(object):
         entry.toterminal(tw)
 
         expected = [
-            ('    def test_foo():', {'bold': True, 'red': False}),
-            ('>       assert 1 == 2', {'bold': True, 'red': False}),
-            ('E       assert 1 == 2', {'bold': True, 'red': True}),
+            ('    def test_mydata(self):', {'bold': True, 'red': False}),
+            ('        import datatest', {'bold': True, 'red': False}),
+            ('>       datatest.validate(1, 2)', {'bold': True, 'red': False}),
+            ('E       ValidationError: invalid data (1 difference): [',
+                {'bold': True, 'red': True}),
+            ('    Deviation(-1, 2),', {'bold': True, 'red': True}),
+            (']', {'bold': True, 'red': True}),
             ('', {}),
             ('test_script.py', {'bold': True, 'red': True}),
-            (':9: AssertionError', {}),
+            (':42: ValidationError', {}),
         ]
 
         assert tw.all_lines == expected
