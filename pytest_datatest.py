@@ -2,6 +2,7 @@
 
 import re
 from _pytest._code.code import ReprEntry
+from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
 from _pytest.assertion.truncate import USAGE_MSG
@@ -98,8 +99,9 @@ def pytest_runtest_makereport(item, call):
             and call.excinfo
             and call.excinfo.errisinstance(ValidationError)):
 
-        call.excinfo.value._should_truncate = _should_truncate
-        call.excinfo.value._truncation_notice = _truncation_notice
+        if _should_truncate_item(item):
+            call.excinfo.value._should_truncate = _should_truncate
+            call.excinfo.value._truncation_notice = _truncation_notice
 
         outcome = yield
         result = outcome.get_result()
