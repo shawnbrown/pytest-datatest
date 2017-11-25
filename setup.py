@@ -21,7 +21,10 @@ setup(
     description='A pytest plugin for datatest and test driven data-wrangling',
     long_description=read('README.rst'),
     py_modules=['pytest_datatest'],
-    install_requires=['pytest>=3.1.1'],
+    install_requires=[
+        'pytest>=3.1.1',
+        'datatest',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Pytest',
