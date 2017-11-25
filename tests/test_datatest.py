@@ -149,3 +149,29 @@ class TestHookWrapper(object):
             ']',                           # <- Should NOT have "E" prefix!
             '',
         ])
+
+    def test_truncation(self, testdir):
+        testdir.makepyfile('''
+            from datatest import ValidationError
+            from datatest import Invalid
+
+            def test_validation():
+                raise ValidationError('invalid data', [Invalid('a', 'b')] * 10)
+        ''')
+        result = testdir.runpytest('-v')
+
+        result.stdout.fnmatch_lines([
+            "E       *ValidationError: invalid data (10 differences): [",
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
+            "    ...",                 # <- Should NOT have "E" prefix!
+            "E       ",
+            "E       ...Full output truncated, use '-vv' to show",
+            "",
+        ])

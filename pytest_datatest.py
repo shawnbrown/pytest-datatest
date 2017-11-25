@@ -2,6 +2,9 @@
 
 import re
 from _pytest._code.code import ReprEntry
+from _pytest.assertion.truncate import DEFAULT_MAX_LINES
+from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
+from _pytest.assertion.truncate import USAGE_MSG
 from pytest import hookimpl
 from datatest import ValidationError
 
@@ -79,6 +82,13 @@ class DatatestReprEntry(ReprEntry):
             self.reprfileloc.toterminal(tw)
 
 
+def _should_truncate(line_count, char_count):
+    return (line_count > DEFAULT_MAX_LINES) or (char_count > DEFAULT_MAX_CHARS)
+
+
+_truncation_notice = '...Full output truncated, {0}'.format(USAGE_MSG)
+
+
 @hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Hook wrapper to replace ReprEntry instances for ValidationError
@@ -87,6 +97,9 @@ def pytest_runtest_makereport(item, call):
     if (call.when == 'call'
             and call.excinfo
             and call.excinfo.errisinstance(ValidationError)):
+
+        call.excinfo.value._should_truncate = _should_truncate
+        call.excinfo.value._truncation_notice = _truncation_notice
 
         outcome = yield
         result = outcome.get_result()
