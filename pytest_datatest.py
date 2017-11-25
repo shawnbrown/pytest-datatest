@@ -2,6 +2,8 @@
 
 import re
 from _pytest._code.code import ReprEntry
+from pytest import hookimpl
+from datatest import ValidationError
 
 
 class DatatestReprEntry(ReprEntry):
@@ -75,3 +77,23 @@ class DatatestReprEntry(ReprEntry):
             if self.lines:
                 tw.line('')
             self.reprfileloc.toterminal(tw)
+
+
+@hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Hook wrapper to replace ReprEntry instances for ValidationError
+    exceptons.
+    """
+    if (call.when == 'call'
+            and call.excinfo
+            and call.excinfo.errisinstance(ValidationError)):
+
+        outcome = yield
+        result = outcome.get_result()
+
+        reprentries = result.longrepr.reprtraceback.reprentries
+        new_reprentries = [DatatestReprEntry(entry) for entry in reprentries]
+        result.longrepr.reprtraceback.reprentries = new_reprentries
+
+    else:
+        outcome = yield

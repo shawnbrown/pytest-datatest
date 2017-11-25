@@ -120,3 +120,32 @@ class TestDatatestReprEntry(object):
         ]
 
         assert tw.all_lines == expected
+
+
+class TestHookWrapper(object):
+    def test_reprentry_replacement(self, testdir):
+        """The pytest-datatest plugin uses a pytest_runtest_makereport()
+        hook wrapper to modify the printed error message when handling
+        datatest.ValidationError failures.
+
+        The plugin should automatically replace ReprEntry objects
+        with DatatestRepreEntry objects. This will have the effect
+        of removing the "E" prefix from the difference rows shown in
+        error messages.
+        """
+
+        testdir.makepyfile('''
+            from datatest import ValidationError
+            from datatest import Invalid
+
+            def test_validation():
+                raise ValidationError('invalid data', [Invalid('a', 'b')])
+        ''')
+        result = testdir.runpytest('-v')
+
+        result.stdout.fnmatch_lines([
+            'E       *ValidationError: invalid data (1 difference): [',
+            '    Invalid(\'a\', \'b\'),',  # <- Should NOT have "E" prefix!
+            ']',                           # <- Should NOT have "E" prefix!
+            '',
+        ])
