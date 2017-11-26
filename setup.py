@@ -23,7 +23,7 @@ setup(
     py_modules=['pytest_datatest'],
     install_requires=[
         'pytest>=3.1.1',
-        'datatest',
+        'datatest>=0.8.3',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
