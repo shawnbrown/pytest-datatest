@@ -54,12 +54,12 @@ class DatatestReprEntry(ReprEntry):
         begin_differences = self._begin_differences(lines)
         end_differences = self._end_differences(lines)
 
-        for index, line in enumerate(lines):  # Trim the "E   " prefix
-            red = line.startswith('E   ')     # and adjust indent-level.
+        for index, line in enumerate(lines):
+            red = line.startswith('E   ')
             if begin_differences < index < end_differences:
-                line = line[1:].strip()
-                if line != ']' and line != '}':
-                    line = '    {0}'.format(line)
+                line = line[1:].strip()            # Trim the "E" prefix and
+                if line != ']' and line != '}':    # use four-space indent
+                    line = '    {0}'.format(line)  # for difference lines.
             tw.line(line, bold=True, red=red)
 
     def toterminal(self, tw):
