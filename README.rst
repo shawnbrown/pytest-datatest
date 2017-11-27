@@ -2,31 +2,29 @@
 pytest-datatest
 ===============
 
-.. image:: https://travis-ci.org/shawnbrown/pytest-datatest.svg?branch=master
-    :target: https://travis-ci.org/shawnbrown/pytest-datatest
-    :alt: See Build Status on Travis CI
+..
+    Project badges for quick reference:
 
-.. image:: https://ci.appveyor.com/api/projects/status/github/shawnbrown/pytest-datatest?branch=master
-    :target: https://ci.appveyor.com/project/shawnbrown/pytest-datatest/branch/master
-    :alt: See Build Status on AppVeyor
+|TravisCI_status| |mit_license|
 
-A simple plugin to use with Pytest
 
-----
-
-This `Pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`_'s `Cookiecutter-pytest-plugin`_ template.
+A `Pytest`_ plugin for `Datatest`_ (test driven data-wrangling).
 
 
 Features
 --------
 
-* TODO
+This simple plugin strips the leading "E   " prefix from lists of
+datatest differences when they appear in reported pytest errors. This
+lets users copy specific *differences* from the output and paste them
+into an *allowance* definition with minimal formatting.
 
 
 Requirements
 ------------
 
-* TODO
+* `pytest`_ (3.1.1 or newer)
+* `datatest`_ (0.8.3 or newer)
 
 
 Installation
@@ -34,7 +32,13 @@ Installation
 
 You can install "pytest-datatest" via `pip`_ from `PyPI`_::
 
-    $ pip install pytest-datatest
+  $ pip install pytest-datatest
+
+If you need bug-fixes or features that are not available in the current
+stable release, you can install the development version directly from
+GitHub::
+
+  $ pip install --upgrade https://github.com/shawnbrown/pytest-datatest/archive/master.zip
 
 
 Usage
@@ -42,31 +46,47 @@ Usage
 
 * TODO
 
+
 Contributing
 ------------
-Contributions are very welcome. Tests can be run with `tox`_, please ensure
+
+Contributions are welcome. Tests can be run with `tox`_, please ensure
 the coverage at least stays the same before you submit a pull request.
+
 
 License
 -------
 
-Distributed under the terms of the `MIT`_ license, "pytest-datatest" is free and open source software
+Distributed under the terms of the `MIT`_ license, "pytest-datatest" is
+free and open source software
 
 
 Issues
 ------
 
-If you encounter any problems, please `file an issue`_ along with a detailed description.
+If you encounter any problems, please `file an issue`_ along with a
+detailed description.
 
-.. _`Cookiecutter`: https://github.com/audreyr/cookiecutter
-.. _`@hackebrot`: https://github.com/hackebrot
-.. _`MIT`: http://opensource.org/licenses/MIT
-.. _`BSD-3`: http://opensource.org/licenses/BSD-3-Clause
-.. _`GNU GPL v3.0`: http://www.gnu.org/licenses/gpl-3.0.txt
-.. _`Apache Software License 2.0`: http://www.apache.org/licenses/LICENSE-2.0
-.. _`cookiecutter-pytest-plugin`: https://github.com/pytest-dev/cookiecutter-pytest-plugin
+
+.. |TravisCI_status| image:: https://travis-ci.org/shawnbrown/pytest-datatest.svg?branch=master
+    :target: https://travis-ci.org/shawnbrown/pytest-datatest
+    :alt: Travis CI Build Status
+.. |AppVeyor_status| image:: https://ci.appveyor.com/api/projects/status/github/shawnbrown/pytest-datatest?branch=master
+    :target: https://ci.appveyor.com/project/shawnbrown/pytest-datatest/branch/master
+    :alt: AppVeyor Build Status
+.. |devstatus| image:: https://img.shields.io/pypi/status/pytest-datatest.svg
+    :target: https://pypi.python.org/pypi/pytest-datatest
+    :alt: Development Status
+.. |mit_license| image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: http://opensource.org/licenses/MIT
+    :alt: MIT License
+.. |pyversions| image:: https://img.shields.io/pypi/pyversions/pytest-datatest.svg
+    :target: https://pypi.python.org/pypi/pytest-datatest#supported-versions
+    :alt: Supported Python Versions
+.. _`datatest`: https://pypi.python.org/pypi/datatest
 .. _`file an issue`: https://github.com/shawnbrown/pytest-datatest/issues
-.. _`pytest`: https://github.com/pytest-dev/pytest
-.. _`tox`: https://tox.readthedocs.io/en/latest/
+.. _`MIT`: http://opensource.org/licenses/MIT
 .. _`pip`: https://pypi.python.org/pypi/pip/
 .. _`PyPI`: https://pypi.python.org/pypi
+.. _`pytest`: https://pypi.python.org/pypi/pytest
+.. _`tox`: https://tox.readthedocs.io/en/latest/
