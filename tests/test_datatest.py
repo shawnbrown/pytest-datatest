@@ -112,8 +112,8 @@ class TestDatatestReprEntry(object):
             ('>       datatest.validate(1, 2)', {'bold': True, 'red': False}),
             ('E       ValidationError: invalid data (1 difference): [',
                 {'bold': True, 'red': True}),
-            ('    Deviation(-1, 2),', {'bold': True, 'red': True}),
-            (']', {'bold': True, 'red': True}),
+            ('            Deviation(-1, 2),', {'bold': True, 'red': True}),
+            ('        ]', {'bold': True, 'red': True}),
             ('', {}),
             ('test_script.py', {'bold': True, 'red': True}),
             (':42: ValidationError', {}),
@@ -144,10 +144,10 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-v')
 
         result.stdout.fnmatch_lines([
-            'E       *ValidationError: invalid data (1 difference): [',
-            '    Invalid(\'a\', \'b\'),',  # <- Should NOT have "E" prefix!
-            ']',                           # <- Should NOT have "E" prefix!
-            '',
+            "E       *ValidationError: invalid data (1 difference): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "        ]",                       # <- No "E" prefix!
+            "",
         ])
 
     def test_truncation(self, testdir):
@@ -163,15 +163,15 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-v')
         result.stdout.fnmatch_lines([
             "E       *ValidationError: invalid data (10 differences): [",
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    ...",                 # <- Should NOT have "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            ...",                 # <- No "E" prefix!
             "E       ",
             "E       ...Full output truncated, use '-vv' to show",
             "",
@@ -181,16 +181,16 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-vv')
         result.stdout.fnmatch_lines([
             "E       *ValidationError: invalid data (10 differences): [",
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "    Invalid('a', 'b'),",  # <- Should NOT have "E" prefix!
-            "]",                       # <- Should NOT have "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "        ]",                       # <- No "E" prefix!
             "",
         ])
