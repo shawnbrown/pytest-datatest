@@ -93,20 +93,27 @@ def pytest_runtest_makereport(item, call):
     """Hook wrapper to replace ReprEntry instances for ValidationError
     exceptons.
     """
-    if (call.when == 'call'
-            and call.excinfo
-            and call.excinfo.errisinstance(ValidationError)):
+    if call.when == 'call':
 
-        if _should_truncate_item(item):
+        datafail = call.excinfo and call.excinfo.errisinstance(ValidationError)
+
+        # Pytest-style truncation must be applied before `yield`.
+        if datafail and _should_truncate_item(item):
             call.excinfo.value._should_truncate = _should_truncate
             call.excinfo.value._truncation_notice = _truncation_notice
 
         outcome = yield
-        result = outcome.get_result()
 
-        reprentries = result.longrepr.reprtraceback.reprentries
-        new_reprentries = [DatatestReprEntry(entry) for entry in reprentries]
-        result.longrepr.reprtraceback.reprentries = new_reprentries
+        # Check for failure again--unittest-style failures only appear
+        # after `yield`.
+        datafail = datafail or \
+            call.excinfo and call.excinfo.errisinstance(ValidationError)
+
+        if datafail:
+            result = outcome.get_result()
+            entries = result.longrepr.reprtraceback.reprentries
+            new_entries = [DatatestReprEntry(entry) for entry in entries]
+            result.longrepr.reprtraceback.reprentries = new_entries
 
     else:
         outcome = yield

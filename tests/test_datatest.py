@@ -194,3 +194,24 @@ class TestHookWrapper(object):
             "        ]",                       # <- No "E" prefix!
             "",
         ])
+
+    def test_with_unittester(self, testdir):
+        """Test ReprEntry replacement with unittest-style tests."""
+
+        testdir.makepyfile('''
+            from datatest import DataTestCase
+            from datatest import ValidationError
+            from datatest import Invalid
+
+            class TestValidation(DataTestCase):
+                def test_validation(self):
+                    raise ValidationError('invalid data', [Invalid('a', 'b')])
+        ''')
+        result = testdir.runpytest('-v')
+
+        result.stdout.fnmatch_lines([
+            "E       *ValidationError: invalid data (1 difference): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "        ]",                       # <- No "E" prefix!
+            "",
+        ])
