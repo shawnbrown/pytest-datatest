@@ -42,7 +42,7 @@ class TestDatatestReprEntry(object):
         assert wrapped.reprfileloc == original.reprfileloc
         assert wrapped.style == original.style
 
-    def test_begin_differences(self):
+    def test_find_diff_start(self):
         lines = [
             '    def test_mydata(self):',
             '>       datatest.validate(1, 2)',
@@ -52,13 +52,13 @@ class TestDatatestReprEntry(object):
             '',
             'test_script.py:42: ValidationError',
         ]
-        assert DatatestReprEntry._begin_differences(lines) == 2, 'line index 2'
+        assert DatatestReprEntry._find_diff_start(lines) == 2, 'line index 2'
 
-    def test_begin_differences_missing(self):
+    def test_find_diff_start_missing(self):
         """When beginning of differences can not be found, return None."""
-        assert DatatestReprEntry._begin_differences(['']) is None
+        assert DatatestReprEntry._find_diff_start(['']) is None
 
-    def test_end_differences(self):
+    def test_find_diff_stop(self):
         lines = [
             '    def test_mydata(self):',
             '>       datatest.validate(1, 2)',
@@ -69,7 +69,7 @@ class TestDatatestReprEntry(object):
             'test_script.py:42: ValidationError',
         ]
         msg = "First line after differences is empty string ('')."
-        assert DatatestReprEntry._end_differences(lines) == 5, msg
+        assert DatatestReprEntry._find_diff_stop(lines) == 5, msg
 
         lines = [
             '    def test_mydata(self):',
@@ -82,11 +82,11 @@ class TestDatatestReprEntry(object):
             'test_script.py:42: ValidationError',
         ]
         msg = 'Should detect truncated differences, too.'
-        assert DatatestReprEntry._end_differences(lines) == 6, msg
+        assert DatatestReprEntry._find_diff_stop(lines) == 6, msg
 
-    def test_end_differences_missing(self):
+    def test_find_diff_stop_missing(self):
         """When end of differences can not be found, return None."""
-        assert DatatestReprEntry._end_differences(['']) is None
+        assert DatatestReprEntry._find_diff_stop(['']) is None
 
     def test_toterminal(self):
         """Should trim leading "E   " prefix for differences but still

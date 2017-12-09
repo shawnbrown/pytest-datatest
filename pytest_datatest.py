@@ -26,7 +26,7 @@ class DatatestReprEntry(ReprEntry):
         )
 
     @staticmethod
-    def _begin_differences(lines):
+    def _find_diff_start(lines):
         """Returns index of line where ValidationError differences begin."""
         regex = re.compile('^E   .+\(\d+ difference[s]?\): [\[{]$')
         for index, line in enumerate(lines):
@@ -35,7 +35,7 @@ class DatatestReprEntry(ReprEntry):
         return None
 
     @staticmethod
-    def _end_differences(lines):
+    def _find_diff_stop(lines):
         """Returns index of line after ValidationError differences have
         ended.
         """
@@ -51,14 +51,13 @@ class DatatestReprEntry(ReprEntry):
         """
         lines = list(self.lines)
 
-        begin_differences = self._begin_differences(lines)
-        end_differences = self._end_differences(lines)
+        diff_start = self._find_diff_start(lines)
+        diff_stop = self._find_diff_stop(lines)
 
-        if isinstance(begin_differences, int) and \
-                isinstance(end_differences, int):
+        if isinstance(diff_start, int) and isinstance(diff_stop, int):
             for index, line in enumerate(lines):
                 red = line.startswith('E   ')
-                if begin_differences < index < end_differences:
+                if diff_start < index < diff_stop:
                     line = ' ' + line[1:]  # Replace "E" prefix with space.
                 tw.line(line, bold=True, red=red)
         else:
