@@ -55,6 +55,9 @@ class DatatestReprEntry(ReprEntry):
         diff_stop = self._find_diff_stop(lines)
 
         if isinstance(diff_start, int) and isinstance(diff_stop, int):
+            lines[diff_start] = lines[diff_start].replace(
+                'datatest.ValidationError', 'ValidationError')
+
             for index, line in enumerate(lines):
                 red = line.startswith('E   ')
                 if diff_start < index < diff_stop:

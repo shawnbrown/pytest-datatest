@@ -145,7 +145,7 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-v')
 
         result.stdout.fnmatch_lines([
-            "E       *ValidationError: invalid data (1 difference): [",
+            "E       ValidationError: invalid data (1 difference): [",
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "        ]",                       # <- No "E" prefix!
             "",
@@ -166,7 +166,7 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-v')
 
         result.stdout.fnmatch_lines([
-            "E       *ValidationError: invalid data (1 difference): [",
+            "E       ValidationError: invalid data (1 difference): [",
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "        ]",                       # <- No "E" prefix!
             "",
@@ -184,7 +184,7 @@ class TestHookWrapper(object):
         # Check for default truncation behavior.
         result = testdir.runpytest('-v')
         result.stdout.fnmatch_lines([
-            "E       *ValidationError: invalid data (10 differences): [",
+            "E       ValidationError: invalid data (10 differences): [",
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
@@ -202,7 +202,7 @@ class TestHookWrapper(object):
         # Check same test with increased verbosity.
         result = testdir.runpytest('-vv')
         result.stdout.fnmatch_lines([
-            "E       *ValidationError: invalid data (10 differences): [",
+            "E       ValidationError: invalid data (10 differences): [",
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
@@ -232,7 +232,7 @@ class TestHookWrapper(object):
         result = testdir.runpytest('-v')
 
         result.stdout.fnmatch_lines([
-            "E       *ValidationError: invalid data (1 difference): [",
+            "E       ValidationError: invalid data (1 difference): [",
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "        ]",                       # <- No "E" prefix!
             "",
