@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pytest
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import ReprFuncArgs
 from _pytest._code.code import ReprFileLocation
@@ -55,8 +54,9 @@ class TestDatatestReprEntry(object):
         ]
         assert DatatestReprEntry._begin_differences(lines) == 2, 'line index 2'
 
-        with pytest.raises(Exception):
-            DatatestReprEntry._begin_differences([''])
+    def test_begin_differences_missing(self):
+        """When beginning of differences can not be found, return None."""
+        assert DatatestReprEntry._begin_differences(['']) is None
 
     def test_end_differences(self):
         lines = [
@@ -84,8 +84,9 @@ class TestDatatestReprEntry(object):
         msg = 'Should detect truncated differences, too.'
         assert DatatestReprEntry._end_differences(lines) == 6, msg
 
-        with pytest.raises(Exception):
-            DatatestReprEntry._end_differences([''])
+    def test_end_differences_missing(self):
+        """When end of differences can not be found, return None."""
+        assert DatatestReprEntry._end_differences(['']) is None
 
     def test_toterminal(self):
         """Should trim leading "E   " prefix for differences but still

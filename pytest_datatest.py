@@ -32,7 +32,7 @@ class DatatestReprEntry(ReprEntry):
         for index, line in enumerate(lines):
             if regex.search(line) is not None:
                 return index
-        raise Exception('cannot find beginning of ValidationError differences')
+        return None
 
     @staticmethod
     def _end_differences(lines):
@@ -43,7 +43,7 @@ class DatatestReprEntry(ReprEntry):
         for index, line in enumerate(reversed(lines)):
             if regex.search(line) is not None:
                 return len(lines) - index
-        raise Exception('cannot find end of ValidationError differences')
+        return None
 
     def _writelines(self, tw):
         """If row contains a difference item, trim the "E   " prefix
