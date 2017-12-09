@@ -151,6 +151,27 @@ class TestHookWrapper(object):
             "",
         ])
 
+    def test_wrapped_failure(self, testdir):
+        """Should also replace ReprEntry objects in wrapped functions too."""
+        testdir.makepyfile('''
+            from datatest import ValidationError
+            from datatest import Invalid
+
+            def wrapped():
+                raise ValidationError('invalid data', [Invalid('a', 'b')])
+
+            def test_wrapped_call():
+                wrapped()
+        ''')
+        result = testdir.runpytest('-v')
+
+        result.stdout.fnmatch_lines([
+            "E       *ValidationError: invalid data (1 difference): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "        ]",                       # <- No "E" prefix!
+            "",
+        ])
+
     def test_truncation(self, testdir):
         testdir.makepyfile('''
             from datatest import ValidationError
