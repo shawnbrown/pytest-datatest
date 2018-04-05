@@ -1,4 +1,31 @@
 # -*- coding: utf-8 -*-
+"""
+A pytest plugin for test driven data-wrangling with datatest.
+
+This plugin is bundled with the ``datatest`` package however,
+it's developed separately as ``pytest_datatest``.
+
+IMPORTANT: Users of Datatest should only install ``datatest``
+itself, not this separate package. But developers of the Datatest
+project should install both ``datatest`` and ``pytest_datatest``.
+
+When both packages are installed, ``pytest_datatest`` is used
+in place of the bundled version.
+
+This is done for a few reasons:
+
+1. It's desirable for the plugin to follow the Pytest project's
+   plugin submission guidelines. Even if this plugin is never
+   submitted to the pytest-dev organisation, it's still good
+   practice to follow the guidelines used by official plugins.
+2. Datatest should work as expected out-of-the-box and the extra
+   code (a single script) is easy to bundle and it's so small
+   that there is no impact on user experience.
+3. Datatest supports more version of Python than does Pytest
+   or tox. It is helpful to keep the testing of the larger
+   datatest project separate from the testing of the pytest
+   plugin component.
+"""
 
 import re
 import warnings
