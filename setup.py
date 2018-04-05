@@ -46,7 +46,7 @@ setup(
     ],
     entry_points={
         'pytest11': [
-            'datatest = pytest_datatest',
+            'datatest_devel = pytest_datatest',
         ],
     },
 )
