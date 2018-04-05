@@ -10,6 +10,11 @@ from pytest import hookimpl
 from datatest import ValidationError
 
 
+version = '0.1.1'
+
+version_info = (0, 1, 1)
+
+
 class DatatestReprEntry(ReprEntry):
     """Wrapper for ReprEntry to change behavior of toterminal() method."""
     def __init__(self, entry):
