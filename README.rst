@@ -1,3 +1,4 @@
+
 ===============
 pytest-datatest
 ===============
@@ -8,7 +9,17 @@ pytest-datatest
 |TravisCI_status| |mit_license|
 
 
-A `Pytest`_ plugin for `Datatest`_ (test driven data-wrangling).
+The development version of `datatest`_'s pytest integration.
+
+.. warning::
+
+    This is the ``pytest-datatest`` development package. Typically,
+    developers should only install this package if they are working
+    on the ``pytest-datatest`` plugin itself.
+
+    Users are encouraged to use the automatically provided version
+    of this plugin that ships with the main ``datatest`` package
+    itself---not this development version.
 
 
 Features
