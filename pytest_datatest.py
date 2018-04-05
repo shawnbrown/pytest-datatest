@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import warnings
 from _pytest._code.code import ReprEntry
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
@@ -13,6 +14,23 @@ from datatest import ValidationError
 version = '0.1.1'
 
 version_info = (0, 1, 1)
+
+
+if __name__ == 'pytest_datatest':
+    try:
+        from datatest._pytest_datatest import version_info \
+                as bundled_version_info
+    except ImportError:
+        bundled_version_info = (0, 0, 0)
+
+    if version_info < bundled_version_info:
+        _warning_msg = (
+            'The installed version of the "pytest_datatest" plugin is '
+            'older than the bundled version included with "datatest". '
+            'Uninstall "pytest_datatest" to automatically enable the '
+            'newer version.'
+        )
+        warnings.warn(_warning_msg)
 
 
 class DatatestReprEntry(ReprEntry):
