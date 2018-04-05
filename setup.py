@@ -13,12 +13,13 @@ def read(fname):
 
 setup(
     name='pytest-datatest',
-    version='0.1.0',
+    version='0.1.1',
     author='Shawn Brown',
     maintainer='Shawn Brown',
     license='MIT',
     url='https://github.com/shawnbrown/pytest-datatest',
-    description='A pytest plugin for datatest and test driven data-wrangling',
+    description=('A pytest plugin for test driven '
+                 'data-wrangling with datatest.'),
     long_description=read('README.rst'),
     py_modules=['pytest_datatest'],
     install_requires=[
