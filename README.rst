@@ -14,12 +14,12 @@ The development version of `datatest`_'s pytest integration.
 **WARNING:**
 
 * This is the ``pytest-datatest`` development package. Typically,
-    developers should only install this package if they are working
-    on the ``pytest-datatest`` plugin itself.
+  developers should only install this package if they are working
+  on the ``pytest-datatest`` plugin itself.
 
 * Users are encouraged to use the automatically provided version
-    of this plugin that ships with the main ``datatest`` package
-    itself---not this development version.
+  of this plugin that ships with the main ``datatest`` package
+  itself---not this development version.
 
 
 Features
