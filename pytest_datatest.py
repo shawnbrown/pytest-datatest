@@ -45,7 +45,7 @@ version_info = (0, 1, 1)
 
 if __name__ == 'pytest_datatest':
     try:
-        from datatest._pytest_datatest import version_info \
+        from datatest._pytest_plugin import version_info \
                 as bundled_version_info
     except ImportError:
         bundled_version_info = (0, 0, 0)
