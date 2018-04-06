@@ -1,0 +1,32 @@
+
+=========================
+pytest_datatest Changelog
+=========================
+
+
+2018-04-?? (0.1.1)
+==================
+
+* First public release.
+* Added formal development-version notification (see module docstring and
+  README).
+* Added warning if version bundled with ``datatest`` is newer.
+* Added error formatting when pytest runs existing unittest-style tests.
+
+
+2017-11-25 (0.1.0)
+==================
+
+* Initial version for testing (never officially released).
+* Added error message formatting to improve ``datatest`` workflow.
+
+
+Changelog Guidelines
+====================
+
+* Begin each section with the date--in YYYY-MM-DD format--followed by the
+  version number in parenthesis.
+* The initial bullet-point may provide a one-line description of the release.
+* Following bullet-points should begin with "Added", "Changed", "Fixed", or
+  "Removed" when describing the notable changes.
+* Limit lines to 80 character width.
