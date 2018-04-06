@@ -18,8 +18,8 @@ setup(
     maintainer='Shawn Brown',
     license='MIT',
     url='https://github.com/shawnbrown/pytest-datatest',
-    description=('A pytest plugin for test driven '
-                 'data-wrangling with datatest.'),
+    description=("A pytest plugin for test driven data-wrangling (this is the "
+                 "development version of datatest's pytest integration)."),
     long_description=read('README.rst'),
     py_modules=['pytest_datatest'],
     install_requires=[
