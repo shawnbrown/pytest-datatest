@@ -4,13 +4,14 @@ pytest_datatest Changelog
 =========================
 
 
-2018-04-?? (0.1.1)
+2018-04-07 (0.1.1)
 ==================
 
 * First public release.
-* Added formal development-version notification (see module docstring and
-  README).
-* Added warning if version bundled with ``datatest`` is newer.
+* Added formal development-version notice (see module docstring and README).
+  This plugin is primarily intended for developers while typical users should
+  use the copy that is bundled with ``datatest``.
+* Added a warning if the plugin that's bundled with ``datatest`` is newer.
 * Added error formatting when pytest runs existing unittest-style tests.
 
 
