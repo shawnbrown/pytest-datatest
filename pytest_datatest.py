@@ -38,9 +38,9 @@ from pytest import hookimpl
 from datatest import ValidationError
 
 
-version = '0.1.1'
+version = '0.1.2'
 
-version_info = (0, 1, 1)
+version_info = (0, 1, 2)
 
 
 if __name__ == 'pytest_datatest':
