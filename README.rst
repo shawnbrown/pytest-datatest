@@ -67,14 +67,13 @@ sure to check that the build is "passing" before doing this)::
 Usage
 -----
 
-* TODO
+When installed, this development version automatically overrides
+datatest's bundled pytest integration. If you want to revert back
+to the bundled plugin, simply uninstall this version.
 
+You can disable this plugin with::
 
-Contributing
-------------
-
-Contributions are welcome. Tests can be run with `tox`_, please ensure
-the coverage at least stays the same before you submit a pull request.
+    pytest -p no:datatest_devel
 
 
 License
