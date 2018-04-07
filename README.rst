@@ -41,15 +41,27 @@ Requirements
 Installation
 ------------
 
-You can install "pytest-datatest" via `pip`_ from `PyPI`_::
+**For Developers:** Clone the git repository and use pip to perform
+an editable install from the cloned project directory::
 
-  $ pip install pytest-datatest
+    git clone git@github.com:shawnbrown/pytest-datatest.git
+    pip install --no-deps --editable ./pytest-datatest
 
-If you need bug-fixes or features that are not available in the current
-stable release, you can install the development version directly from
-GitHub::
+**For Users:** Don't install this package---you don't need it.
+This plugin is already bundled with `datatest`_ itself.
 
-  $ pip install --upgrade https://github.com/shawnbrown/pytest-datatest/archive/master.zip
+**For Users With Special Requirements:** If you aren't a datatest or
+plugin developer but instead need bug-fixes or features that are not
+yet available from the main datatest project, you can install
+"pytest-datatest" via `pip`_ from `PyPI`_::
+
+    pip install pytest-datatest
+
+And if the version is PyPI isn't new enough for your needs, you can
+install the plugin directly from the live GitHub repository (make
+sure to check that the build is "passing" before doing this)::
+
+    pip install --upgrade https://github.com/shawnbrown/pytest-datatest/archive/master.zip
 
 
 Usage
