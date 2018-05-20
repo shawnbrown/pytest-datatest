@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pytest import fixture
 
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import ReprFuncArgs
@@ -123,17 +124,18 @@ class TestDatatestReprEntry(object):
         assert tw.all_lines == expected
 
 
-class TestHookWrapper(object):
-    def test_reprentry_replacement(self, testdir):
-        """The pytest-datatest plugin uses a pytest_runtest_makereport()
-        hook wrapper to modify the printed error message when handling
-        datatest.ValidationError failures.
+class TestReprEntryReplacement(object):
+    """The pytest-datatest plugin uses a pytest_runtest_makereport()
+    hook wrapper to modify the printed error message when handling
+    datatest.ValidationError failures.
 
-        The plugin should automatically replace ReprEntry objects
-        with DatatestRepreEntry objects. This will have the effect
-        of removing the "E" prefix from the difference rows shown in
-        error messages.
-        """
+    The plugin should automatically replace ReprEntry objects with
+    DatatestReprEntry objects. This will have the effect of removing
+    the "E" prefix from the difference rows shown in error messages.
+    """
+
+    def test_simple_failure(self, testdir):
+        """Test simple failure case."""
 
         testdir.makepyfile('''
             from datatest import ValidationError
@@ -153,6 +155,7 @@ class TestHookWrapper(object):
 
     def test_wrapped_failure(self, testdir):
         """Should also replace ReprEntry objects in wrapped functions too."""
+
         testdir.makepyfile('''
             from datatest import ValidationError
             from datatest import Invalid
@@ -167,51 +170,6 @@ class TestHookWrapper(object):
 
         result.stdout.fnmatch_lines([
             "E       ValidationError: invalid data (1 difference): [",
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "        ]",                       # <- No "E" prefix!
-            "",
-        ])
-
-    def test_truncation(self, testdir):
-        testdir.makepyfile('''
-            from datatest import ValidationError
-            from datatest import Invalid
-
-            def test_validation():
-                raise ValidationError('invalid data', [Invalid('a', 'b')] * 10)
-        ''')
-
-        # Check for default truncation behavior.
-        result = testdir.runpytest('-v')
-        result.stdout.fnmatch_lines([
-            "E       ValidationError: invalid data (10 differences): [",
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            ...",                 # <- No "E" prefix!
-            "E       ",
-            "E       ...Full output truncated, use '-vv' to show",
-            "",
-        ])
-
-        # Check same test with increased verbosity.
-        result = testdir.runpytest('-vv')
-        result.stdout.fnmatch_lines([
-            "E       ValidationError: invalid data (10 differences): [",
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
-            "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "        ]",                       # <- No "E" prefix!
             "",
@@ -233,6 +191,54 @@ class TestHookWrapper(object):
 
         result.stdout.fnmatch_lines([
             "E       ValidationError: invalid data (1 difference): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "        ]",                       # <- No "E" prefix!
+            "",
+        ])
+
+
+class TestTruncation(object):
+    @fixture(autouse=True)
+    def long_error(self, testdir):
+        testdir.makepyfile('''
+            from datatest import ValidationError
+            from datatest import Invalid
+
+            def test_validation():
+                raise ValidationError('invalid data', [Invalid('a', 'b')] * 10)
+        ''')
+
+    def test_default_truncation(self, testdir):
+        result = testdir.runpytest('-v')
+        result.stdout.fnmatch_lines([
+            "E       ValidationError: invalid data (10 differences): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            ...",                 # <- No "E" prefix!
+            "E       ",
+            "E       ...Full output truncated, use '-vv' to show",
+            "",
+        ])
+
+    def test_increased_verbosity(self, testdir):
+        result = testdir.runpytest('-vv')
+        result.stdout.fnmatch_lines([
+            "E       ValidationError: invalid data (10 differences): [",
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
+            "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "            Invalid('a', 'b'),",  # <- No "E" prefix!
             "        ]",                       # <- No "E" prefix!
             "",
