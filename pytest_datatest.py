@@ -69,10 +69,14 @@ def pytest_configure(config):
 
 
 def pytest_addoption(parser):
-    parser.addoption(
+    group = parser.getgroup('Datatest')
+    group.addoption(
         '--ignore-mandatory',
         action='store_true',
-        help='blerg',
+        help=(
+            "ignore 'mandatory' marker (continues testing "
+            "even when a mandatory test fails)."
+        ),
     )
 
 
