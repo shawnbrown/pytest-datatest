@@ -173,5 +173,11 @@ def pytest_runtest_makereport(item, call):
             new_entries = [DatatestReprEntry(entry) for entry in entries]
             result.longrepr.reprtraceback.reprentries = new_entries
 
+        # If test was mandatory, session should fail immediately.
+        if call.excinfo:
+            if item.get_marker('mandatory'):
+                item.session.shouldfail = \
+                    'mandatory {0!r} failed'.format(item.name)
+
     else:
         outcome = yield

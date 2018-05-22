@@ -243,3 +243,36 @@ class TestTruncation(object):
             "        ]",                       # <- No "E" prefix!
             "",
         ])
+
+
+class TestMandatoryMarker(object):
+    def test_mandatory_passed(self, testdir):
+        testdir.makepyfile('''
+            import pytest
+
+            @pytest.mark.mandatory
+            def test_first():
+                pass
+
+            def test_second():
+                pass
+        ''')
+        result = testdir.runpytest()
+        result.assert_outcomes(passed=2, failed=0)
+
+    def test_mandatory_failed(self, testdir):
+        """When a mandatory test fails, the session should stop
+        immediately.
+        """
+        testdir.makepyfile('''
+            import pytest
+
+            @pytest.mark.mandatory
+            def test_first():
+                raise Exception()
+
+            def test_second():
+                raise Exception()
+        ''')
+        result = testdir.runpytest()
+        result.assert_outcomes(passed=0, failed=1)  # 2nd test shouldn't run.
