@@ -246,6 +246,12 @@ class TestTruncation(object):
 
 
 class TestMandatoryMarker(object):
+    def test_marker_registration(self, testdir):
+        result = testdir.runpytest('--markers')
+        result.stdout.fnmatch_lines([
+            '@pytest.mark.mandatory:*',
+        ])
+
     def test_mandatory_passed(self, testdir):
         testdir.makepyfile('''
             import pytest

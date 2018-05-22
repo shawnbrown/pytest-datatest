@@ -60,6 +60,14 @@ if __name__ == 'pytest_datatest':
         warnings.warn(_warning_msg)
 
 
+def pytest_configure(config):
+    """Register 'mandatory' marker."""
+    config.addinivalue_line(
+        'markers',
+        'mandatory: test is mandatory, stops session early on failure.',
+    )
+
+
 class DatatestReprEntry(ReprEntry):
     """Wrapper for ReprEntry to change behavior of toterminal() method."""
     def __init__(self, entry):
