@@ -110,15 +110,22 @@ class TestDatatestReprEntry(object):
         entry.toterminal(tw)
 
         expected = [
-            ('    def test_mydata(self):', {'bold': True, 'red': False}),
-            ('>       datatest.validate(1, 2)', {'bold': True, 'red': False}),
+            ('    def test_mydata(self):',
+                {'bold': True, 'red': False}),
+            ('>       datatest.validate(1, 2)',
+                {'bold': True, 'red': False}),
             ('E       ValidationError: invalid data (1 difference): [',
                 {'bold': True, 'red': True}),
-            ('            Deviation(-1, 2),', {'bold': True, 'red': True}),
-            ('        ]', {'bold': True, 'red': True}),
-            ('', {}),
-            ('test_script.py', {'bold': True, 'red': True}),
-            (':42: ValidationError', {}),
+            ('            Deviation(-1, 2),',
+                {'bold': True, 'red': True}),
+            ('        ]',
+                {'bold': True, 'red': True}),
+            ('',
+                {}),
+            ('test_script.py',
+                {'bold': True, 'red': True}),
+            (':42: ValidationError',
+                {}),
         ]
 
         assert tw.all_lines == expected
