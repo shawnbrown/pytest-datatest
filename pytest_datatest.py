@@ -68,6 +68,14 @@ def pytest_configure(config):
     )
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        '--ignore-mandatory',
+        action='store_true',
+        help='blerg',
+    )
+
+
 class DatatestReprEntry(ReprEntry):
     """Wrapper for ReprEntry to change behavior of toterminal() method."""
     def __init__(self, entry):
@@ -182,10 +190,10 @@ def pytest_runtest_makereport(item, call):
             result.longrepr.reprtraceback.reprentries = new_entries
 
         # If test was mandatory, session should fail immediately.
-        if call.excinfo:
-            if item.get_marker('mandatory'):
-                item.session.shouldfail = \
-                    'mandatory {0!r} failed'.format(item.name)
+        if (call.excinfo and item.get_marker('mandatory')
+                and not item.config.getoption('--ignore-mandatory')):
+            shouldfail = 'mandatory {0!r} failed'.format(item.name)
+            item.session.shouldfail = shouldfail
 
     else:
         outcome = yield
