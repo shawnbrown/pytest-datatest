@@ -283,6 +283,24 @@ class TestMandatoryMarker(object):
         result = testdir.runpytest()
         result.assert_outcomes(passed=0, failed=1)  # 2nd test shouldn't run.
 
+    def test_stopping_early_message(self, testdir):
+        testdir.makepyfile('''
+            import pytest
+
+            @pytest.mark.mandatory
+            def test_first():
+                raise Exception()
+
+            def test_second():
+                raise Exception()
+        ''')
+
+        result = testdir.runpytest()
+        result.stdout.fnmatch_lines([
+            "stopping early, mandatory 'test_first' failed",
+            "use '--ignore-mandatory' to continue testing",
+        ])
+
     def test_ignore_mandatory(self, testdir):
         """Using --ignore-mandatory should prevent mandatory failures
         from stopping the session early.
@@ -299,3 +317,4 @@ class TestMandatoryMarker(object):
         ''')
         result = testdir.runpytest('--ignore-mandatory')
         result.assert_outcomes(passed=0, failed=2)
+        assert 'stopping early' not in result.stdout.str()

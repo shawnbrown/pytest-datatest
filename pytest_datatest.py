@@ -197,3 +197,20 @@ def pytest_runtest_makereport(item, call):
 
     else:
         outcome = yield
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus):
+    """Add a section to terminal summary reporting."""
+    shouldfail = str(terminalreporter._session.shouldfail or '')
+
+    if shouldfail.startswith('mandatory') and shouldfail.endswith('failed'):
+        terminalreporter.write_sep('_', yellow=True)
+        terminalreporter.write(
+            (
+                "\n"
+                "stopping early, {0}\n"
+                "use '--ignore-mandatory' to continue testing\n"
+                "\n"
+            ).format(shouldfail),
+            yellow=True,
+        )
