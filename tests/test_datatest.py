@@ -55,6 +55,18 @@ class TestDatatestReprEntry(object):
         ]
         assert DatatestReprEntry._find_diff_start(lines) == 2, 'line index 2'
 
+    def test_find_diff_start_no_message(self):
+        lines = [
+            '    def test_mydata(self):',
+            '>       datatest.validate(1, 2)',
+            'E       ValidationError: 1 difference: [',  # <- Diff count only,
+            'E           Deviation(-1, 2),',             # no message.
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        assert DatatestReprEntry._find_diff_start(lines) == 2, 'line index 2'
+
     def test_find_diff_start_missing(self):
         """When beginning of differences can not be found, return None."""
         assert DatatestReprEntry._find_diff_start(['']) is None

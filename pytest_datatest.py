@@ -80,6 +80,13 @@ def pytest_addoption(parser):
     )
 
 
+_diff_start_regex = re.compile(
+    '^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$'
+)
+
+_diff_stop_regex = re.compile('^E\s+(?:\}|\]|\.\.\.)$')
+
+
 class DatatestReprEntry(ReprEntry):
     """Wrapper for ReprEntry to change behavior of toterminal() method."""
     def __init__(self, entry):
@@ -98,9 +105,8 @@ class DatatestReprEntry(ReprEntry):
     @staticmethod
     def _find_diff_start(lines):
         """Returns index of line where ValidationError differences begin."""
-        regex = re.compile('^E   .+\(\d+ difference[s]?\): [\[{]$')
         for index, line in enumerate(lines):
-            if regex.search(line) is not None:
+            if _diff_start_regex.search(line) is not None:
                 return index
         return None
 
@@ -109,9 +115,8 @@ class DatatestReprEntry(ReprEntry):
         """Returns index of line after ValidationError differences have
         ended.
         """
-        regex = re.compile('^E   \s*(?:\}|\]|\.\.\.)$')
         for index, line in enumerate(reversed(lines)):
-            if regex.search(line) is not None:
+            if _diff_stop_regex.search(line) is not None:
                 return len(lines) - index
         return None
 
