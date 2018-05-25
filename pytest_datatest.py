@@ -41,7 +41,7 @@ if __name__ == 'pytest_datatest':
 else:
     _bundled_version_info = (0, 0, 0)
 
-version = '0.1.2'
+version = '0.1.2.dev0'
 
 version_info = (0, 1, 2)
 
