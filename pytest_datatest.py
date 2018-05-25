@@ -28,7 +28,6 @@ This is done for a few reasons:
 """
 
 import re
-import warnings
 from _pytest._code.code import ReprEntry
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
@@ -37,27 +36,14 @@ from _pytest.assertion.truncate import USAGE_MSG
 from pytest import hookimpl
 from datatest import ValidationError
 
+if __name__ == 'pytest_datatest':
+    from datatest._pytest_plugin import version_info as _bundled_version_info
+else:
+    _bundled_version_info = (0, 0, 0)
 
 version = '0.1.2'
 
 version_info = (0, 1, 2)
-
-
-if __name__ == 'pytest_datatest':
-    try:
-        from datatest._pytest_plugin import version_info \
-                as bundled_version_info
-    except ImportError:
-        bundled_version_info = (0, 0, 0)
-
-    if version_info < bundled_version_info:
-        _warning_msg = (
-            'The installed version of the "pytest_datatest" plugin is '
-            'older than the bundled version included with "datatest". '
-            'Uninstall "pytest_datatest" to automatically enable the '
-            'newer version.'
-        )
-        warnings.warn(_warning_msg)
 
 
 def pytest_configure(config):
@@ -213,7 +199,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus):
     shouldfail = str(terminalreporter._session.shouldfail or '')
 
     if shouldfail.startswith('mandatory') and shouldfail.endswith('failed'):
-        terminalreporter.write_sep('_', yellow=True)
+        markup = {'yellow': True}
+        terminalreporter.write_sep('_', **markup)
         terminalreporter.write(
             (
                 "\n"
@@ -221,5 +208,22 @@ def pytest_terminal_summary(terminalreporter, exitstatus):
                 "use '--ignore-mandatory' to continue testing\n"
                 "\n"
             ).format(shouldfail),
-            yellow=True,
+            **markup
+        )
+
+    if _bundled_version_info > version_info:
+        markup = {'yellow': True, 'bold': True}
+        terminalreporter.section('NOTICE', **markup)
+        terminalreporter.write(
+            (
+                "\n"
+                "The installed version of the 'pytest_datatest' plugin "
+                "is older than the bundled version included with datatest "
+                "itself.\n"
+                "\n"
+                "Uninstall 'pytest_datatest' to automatically enable the "
+                "newer version.\n"
+                "\n"
+            ),
+            **markup
         )
