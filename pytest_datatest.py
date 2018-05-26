@@ -48,14 +48,17 @@ version_info = (0, 1, 2)
 
 def pytest_addoption(parser):
     group = parser.getgroup('Datatest')
-    group.addoption(
-        '--ignore-mandatory',
-        action='store_true',
-        help=(
-            "ignore 'mandatory' marker (continues testing "
-            "even when a mandatory test fails)."
-        ),
-    )
+    try:
+        group.addoption(
+            '--ignore-mandatory',
+            action='store_true',
+            help=(
+                "ignore 'mandatory' marker (continues testing "
+                "even when a mandatory test fails)."
+            ),
+        )
+    except ValueError as exc:
+        assert 'already added' in str(exc)
 
 
 def pytest_configure(config):
