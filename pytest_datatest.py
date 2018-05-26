@@ -46,14 +46,6 @@ version = '0.1.2.dev0'
 version_info = (0, 1, 2)
 
 
-def pytest_configure(config):
-    """Register 'mandatory' marker."""
-    config.addinivalue_line(
-        'markers',
-        'mandatory: test is mandatory, stops session early on failure.',
-    )
-
-
 def pytest_addoption(parser):
     group = parser.getgroup('Datatest')
     group.addoption(
@@ -63,6 +55,14 @@ def pytest_addoption(parser):
             "ignore 'mandatory' marker (continues testing "
             "even when a mandatory test fails)."
         ),
+    )
+
+
+def pytest_configure(config):
+    """Register 'mandatory' marker."""
+    config.addinivalue_line(
+        'markers',
+        'mandatory: test is mandatory, stops session early on failure.',
     )
 
 
