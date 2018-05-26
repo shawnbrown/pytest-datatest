@@ -61,6 +61,12 @@ def pytest_addoption(parser):
         assert 'already added' in str(exc)
 
 
+def pytest_plugin_registered(plugin, manager):
+    development_plugin = __name__ == 'pytest_datatest'
+    if development_plugin:
+        manager.set_blocked(name='datatest')  # Block bundled plugin.
+
+
 def pytest_configure(config):
     """Register 'mandatory' marker."""
     config.addinivalue_line(
