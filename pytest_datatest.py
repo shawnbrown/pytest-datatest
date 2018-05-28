@@ -49,6 +49,10 @@ _idconfig_session_dict = {}  # Dictionary to store ``session`` reference.
 
 
 def pytest_addoption(parser):
+    """Add the '--ignore-mandatory' command line option."""
+    # The following try/except block is needed because this hook
+    # runs before we have a chance to turn-off the bundled plugin,
+    # so this option might have already been added.
     group = parser.getgroup('Datatest')
     try:
         group.addoption(
@@ -64,6 +68,7 @@ def pytest_addoption(parser):
 
 
 def pytest_plugin_registered(plugin, manager):
+    """If running the development version, turn-off the bundled plugin."""
     development_plugin = __name__ == 'pytest_datatest'
     if development_plugin:
         manager.set_blocked(name='datatest')  # Block bundled plugin.
@@ -177,7 +182,7 @@ _truncation_notice = '...Full output truncated, {0}'.format(USAGE_MSG)
 @hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Hook wrapper to replace ReprEntry instances for ValidationError
-    exceptons.
+    exceptons and to handle when 'mandatory' tests fail.
     """
     if call.when == 'call':
 
@@ -212,7 +217,7 @@ def pytest_runtest_makereport(item, call):
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus):
-    """Add a section to terminal summary reporting."""
+    """Add sections to terminal summary report when appropriate."""
 
     session = _idconfig_session_dict.get(id(terminalreporter.config), None)
     shouldfail = str(getattr(session, 'shouldfail', ''))
