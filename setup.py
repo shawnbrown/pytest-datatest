@@ -23,7 +23,7 @@ setup(
     long_description=read('README.rst'),
     py_modules=['pytest_datatest'],
     install_requires=[
-        'pytest>=3.1.1',
+        'pytest>=3.3',
         'datatest>=0.9.0',
     ],
     classifiers=[

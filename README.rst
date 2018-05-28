@@ -19,8 +19,8 @@ just ``datatest``—this plugin comes bundled with it.
 Requirements
 ============
 
-* `pytest`_ (3.1.1 or newer)
-* `datatest`_ (0.8.3 or newer)
+* `pytest`_ (3.3 or newer)
+* `datatest`_ (0.9.0 or newer)
 
 
 Installation
