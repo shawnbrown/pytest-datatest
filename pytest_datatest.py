@@ -41,9 +41,11 @@ if __name__ == 'pytest_datatest':
 else:
     _bundled_version_info = (0, 0, 0)
 
-version = '0.1.2.dev0'
 
+version = '0.1.2.dev0'
 version_info = (0, 1, 2)
+
+_idconfig_session_dict = {}  # Dictionary to store ``session`` reference.
 
 
 def pytest_addoption(parser):
@@ -73,6 +75,12 @@ def pytest_configure(config):
         'markers',
         'mandatory: test is mandatory, stops session early on failure.',
     )
+
+
+def pytest_collection_modifyitems(session, config, items):
+    """Store ``session`` reference to use in pytest_terminal_summary()."""
+    global _idconfig_session_dict
+    _idconfig_session_dict[id(config)] = session
 
 
 _diff_start_regex = re.compile(
@@ -205,8 +213,9 @@ def pytest_runtest_makereport(item, call):
 
 def pytest_terminal_summary(terminalreporter, exitstatus):
     """Add a section to terminal summary reporting."""
-    shouldfail = str(terminalreporter._session.shouldfail or '')
 
+    session = _idconfig_session_dict.get(id(terminalreporter.config), None)
+    shouldfail = str(getattr(session, 'shouldfail', ''))
     if shouldfail.startswith('mandatory') and shouldfail.endswith('failed'):
         markup = {'yellow': True}
         terminalreporter.write_sep('_', **markup)
