@@ -88,10 +88,9 @@ def pytest_collection_modifyitems(session, config, items):
     _idconfig_session_dict[id(config)] = session
 
 
+# Compile regex patterns to match error message text.
 _diff_start_regex = re.compile(
-    '^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$'
-)
-
+    '^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
 _diff_stop_regex = re.compile('^E\s+(?:\}|\]|\.\.\.)$')
 
 
