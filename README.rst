@@ -86,10 +86,12 @@ To disable both the development *and* bundled versions use::
 Features
 ========
 
-This simple plugin strips the leading "E   " prefix from lists of
-datatest differences when they appear in reported pytest errors. This
-lets users copy specific *differences* from the output and paste them
-into an *allowance* definition with minimal formatting.
+* Provides a 'mandatory' marker to support incremental testing.
+* Provides an '--ignore-mandatory' command line option to override
+  the default 'mandatory' behavior.
+* Strips the leading "E   " prefix from error *differences* so
+  that users can repurpose the output for *allowance* definitions
+  with minimal formatting.
 
 
 License
