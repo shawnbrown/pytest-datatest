@@ -72,9 +72,15 @@ When installed, this development version automatically overrides
 datatest's bundled pytest integration. If you want to revert back
 to the bundled plugin, simply uninstall this version.
 
-You can disable this plugin with::
+To disable the development version (and temporarily enable the
+bundled version) use::
 
     pytest -p no:datatest_devel
+
+
+To disable both the development *and* bundled versions use::
+
+    pytest -p no:datatest_devel -p no:datatest
 
 
 Features
