@@ -89,9 +89,9 @@ Features
 * Provides a 'mandatory' marker to support incremental testing.
 * Provides an '--ignore-mandatory' command line option to override
   the default 'mandatory' behavior.
-* Strips the leading "E   " prefix from error *differences* so
-  that users can repurpose the output for *allowance* definitions
-  with minimal formatting.
+* Strips the leading "E   " prefix from ``ValidationError`` *differences*
+  to help users more easily repurpose parts of the error  message for
+  ``allowed.specific(...)`` definitions.
 
 
 License
