@@ -4,7 +4,7 @@ pytest_datatest Changelog
 =========================
 
 
-YYYY-MM-DD (0.1.2)
+2018-06-21 (0.1.2)
 ==================
 
 * Added handling for a 'mandatory' marker to support incremental testing

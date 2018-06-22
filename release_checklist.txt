@@ -3,29 +3,32 @@
 Release Checklist for pytest_datatest
 =====================================
 
-1. Verify *version* argument in setup.py.
+1. Run full set of tox environment tests (not just the shorter subset
+   used for most development work).
 
-2. Verify *version* and *version_info* variables in pytest_datatest.py.
+2. Verify *version* argument in setup.py.
 
-3. Add release date to CHANGELOG and make sure it includes all notable changes.
+3. Verify *version* and *version_info* variables in pytest_datatest.py.
 
-4. Commit and push final changes to upstream repository.
+4. Add release date to CHANGELOG and make sure it includes all notable changes.
 
-5. Remove all existing files in the dist/ folder.
+5. Commit and push final changes to upstream repository.
 
-6. Build new distributions:
+6. Remove all existing files in the dist/ folder.
+
+7. Build new distributions:
 
    $ python setup.py sdist bdist_wheel
 
-7. Upload source and wheel distributions to PyPI:
+8. Upload source and wheel distributions to PyPI:
 
    $ twine upload dist/*
 
-8. Double check PyPI project page and test installation from PyPI.
+9. Double check PyPI project page and test installation from PyPI.
 
-9. Add a version-tag to the upstream development repository.
+10. Add a version-tag to the upstream development repository.
 
-10. Bundle this version with the datatest package.
+11. Bundle this version with the datatest package.
 
     In the datatest project's development repository, do the following:
 
@@ -35,7 +38,7 @@ Release Checklist for pytest_datatest
 
             "Update bundled pytest-datatest plugin to version X.X.X."
 
-11. Iterate version number in repository so it is not confused
+12. Iterate version number in repository so it is not confused
     with the just-published release. Check the following files:
 
     * setup.py
