@@ -32,14 +32,20 @@ Release Checklist for pytest_datatest
 
     In the datatest project's development repository, do the following:
 
-        * Copy "pytest_datatest.py" into the "datatest/_pytest_plugin/" folder.
+        * Copy the contents of "pytest_datatest.py" into the
+          "datatest/_pytest_plugin.py" file.
 
         * Commit this change with a comment like the one below:
 
             "Update bundled pytest-datatest plugin to version X.X.X."
 
-12. Iterate version number in repository so it is not confused
-    with the just-published release. Check the following files:
+12. Iterate version number in repository to "X.X.X.dev0" so it is not
+    confused with the just-published release. Check the following files:
 
     * setup.py
     * pytest_datatest.py
+
+    Commit these changes with a comment like the one below:
+
+      Iterate version number to differentiate development version
+      from latest release.
