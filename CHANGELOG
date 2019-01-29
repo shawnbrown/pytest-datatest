@@ -4,6 +4,15 @@ pytest_datatest Changelog
 =========================
 
 
+2019-01-28 (0.1.3)
+==================
+
+* This update adds testing and support for latest versions of Pytest and
+  Python (now tested using Pytest 3.3 to 4.1 and Python 2.7 to 3.7).
+* Changed handling for 'mandatory' marker to support older and newer Pytest
+  versions.
+
+
 2018-06-21 (0.1.2)
 ==================
 
