@@ -42,8 +42,8 @@ else:
     _bundled_version_info = (0, 0, 0)
 
 
-version = '0.1.3'
-version_info = (0, 1, 3)
+version = '0.1.4.dev0'
+version_info = (0, 1, 4)
 
 _idconfig_session_dict = {}  # Dictionary to store ``session`` reference.
 
