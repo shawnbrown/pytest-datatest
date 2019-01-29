@@ -91,8 +91,8 @@ def pytest_collection_modifyitems(session, config, items):
 
 # Compile regex patterns to match error message text.
 _diff_start_regex = re.compile(
-    '^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
-_diff_stop_regex = re.compile('^E\s+(?:\}|\]|\.\.\.)$')
+    r'^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
+_diff_stop_regex = re.compile(r'^E\s+(?:\}|\]|\.\.\.)$')
 
 
 class DatatestReprEntry(ReprEntry):
