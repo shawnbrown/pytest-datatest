@@ -105,21 +105,26 @@ class TestDatatestReprEntry(object):
         """Should trim leading "E   " prefix for differences but still
         print in red.
         """
-        entry = DatatestReprEntry(ReprEntry(
-            lines=['    def test_mydata(self):',
-                   '>       datatest.validate(1, 2)',
-                   'E       ValidationError: invalid data (1 difference): [',
-                   'E           Deviation(-1, 2),',
-                   'E       ]'],
-            reprfuncargs=ReprFuncArgs([]),
-            reprlocals=None,
-            filelocrepr=ReprFileLocation('test_script.py', 42,
-                                         'ValidationError'),
-            style='long'
-        ))
+        lines = [
+            '    def test_mydata(self):',
+            '>       datatest.validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]'
+        ]
+
+        original_entry = ReprEntry(
+            lines,
+            ReprFuncArgs([]),
+            None,
+            ReprFileLocation('test_script.py', 42, 'ValidationError'),
+            'long',
+        )
+
+        wrapped_entry = DatatestReprEntry(original_entry)
 
         tw = DummyTerminalWriter()
-        entry.toterminal(tw)
+        wrapped_entry.toterminal(tw)  # <- Call method.
 
         expected = [
             ('    def test_mydata(self):',
