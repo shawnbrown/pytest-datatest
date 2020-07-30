@@ -216,7 +216,7 @@ def pytest_runtest_makereport(item, call):
                 try:
                     mandatory = item.get_marker('mandatory')  # pytest <= 3.5
                 except AttributeError:
-                    mandatory = False  # in pytest >= 3.6 item can be non-Item
+                    mandatory = False  # in pytest <= 3.6 item can be non-Item
 
             if mandatory and not item.config.getoption('--ignore-mandatory'):
                 shouldfail = 'mandatory {0!r} failed'.format(item.name)
