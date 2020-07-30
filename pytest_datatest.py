@@ -184,7 +184,7 @@ _truncation_notice = '...Full output truncated, {0}'.format(USAGE_MSG)
 @hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Hook wrapper to replace ReprEntry instances for ValidationError
-    exceptons and to handle when 'mandatory' tests fail.
+    exceptions and to handle failure of 'mandatory' tests.
     """
     if call.when == 'call':
 
