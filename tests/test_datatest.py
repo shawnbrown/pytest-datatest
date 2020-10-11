@@ -272,6 +272,51 @@ class TestTruncation(object):
         ])
 
 
+class TestXdistPlugin(object):
+    """Check behavior using the `pytest-xdist` plugin. Communication
+    between xdist workers and pytest are managed with JSON messages.
+    Unlike non-xdist test sessions, results are processed using the
+    _pytest.reports._report_kwargs_from_json() function.
+    """
+
+    @pytest.fixture
+    def passing_case(self, testdir):
+        testdir.makepyfile('''
+            from datatest import validate
+
+            def test_one():
+                validate('foo', 'foo')
+
+            def test_two():
+                validate('bar', 'bar')
+        ''')
+        return testdir
+
+    @pytest.fixture
+    def failing_case(self, testdir):
+        testdir.makepyfile('''
+            from datatest import validate
+
+            def test_one():
+                validate('foo', 'baz')
+
+            def test_two():
+                validate('bar', 'baz')
+        ''')
+        return testdir
+
+    def test_passing(self, passing_case):
+        """Run passing cases with xdist option '-n 1'."""
+        result = passing_case.runpytest('-n', '1')
+        result.assert_outcomes(passed=2, failed=0)
+
+    @pytest.mark.xfail
+    def test_failing(self, failing_case):
+        """Run failing cases with xdist option '-n 1'."""
+        result = failing_case.runpytest('-n', '1')
+        result.assert_outcomes(passed=0, failed=2)
+
+
 class TestMandatoryMarker(object):
     def test_marker_registered(self, testdir):
         result = testdir.runpytest('--markers')
