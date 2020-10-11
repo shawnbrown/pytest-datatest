@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pytest import fixture
+import pytest
 
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import ReprFuncArgs
@@ -222,7 +222,7 @@ class TestReprEntryReplacement(object):
 
 
 class TestTruncation(object):
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def long_error(self, testdir):
         testdir.makepyfile('''
             from datatest import ValidationError
@@ -279,7 +279,7 @@ class TestMandatoryMarker(object):
             '@pytest.mark.mandatory:*',
         ])
 
-    @fixture
+    @pytest.fixture
     def passing_cases(self, testdir):
         testdir.makepyfile('''
             import pytest
@@ -293,7 +293,7 @@ class TestMandatoryMarker(object):
         ''')
         return testdir
 
-    @fixture
+    @pytest.fixture
     def failing_cases(self, testdir):
         testdir.makepyfile('''
             import pytest
