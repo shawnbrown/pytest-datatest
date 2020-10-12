@@ -33,6 +33,7 @@ import itertools
 import re
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import FormattedExcinfo
+from _pytest._code.code import ExceptionChainRepr
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
@@ -225,7 +226,20 @@ def _formatted_lines_generator(lines, fail_index):
 
 
 def pytest_runtest_logreport(report):
-    pass
+    """Hook to format the ReprEntry lines for ValidationErrors"""
+    if report.when != 'call' \
+            or not isinstance(report.longrepr, ExceptionChainRepr):
+        return  # <- EXIT!
+
+    for element_tuple in report.longrepr.chain:
+        reprtraceback = element_tuple[0]
+
+        for reprentry in reprtraceback.reprentries:
+            lines = reprentry.lines
+            position = _find_validationerror_start(lines)
+            if position != -1:
+                lines = _formatted_lines_generator(lines, position)
+                reprentry.lines = list(lines)
 
 
 def _should_truncate(line_count, char_count):
@@ -253,14 +267,14 @@ def pytest_runtest_makereport(item, call):
 
         # Check for failure again--unittest-style failures only appear
         # after `yield`.
-        datafail = datafail or \
-            call.excinfo and call.excinfo.errisinstance(ValidationError)
-
-        if datafail:
-            result = outcome.get_result()
-            entries = result.longrepr.reprtraceback.reprentries
-            new_entries = [DatatestReprEntry(entry) for entry in entries]
-            result.longrepr.reprtraceback.reprentries = new_entries
+        #datafail = datafail or \
+        #    call.excinfo and call.excinfo.errisinstance(ValidationError)
+        #
+        #if datafail:
+        #    result = outcome.get_result()
+        #    entries = result.longrepr.reprtraceback.reprentries
+        #    new_entries = [DatatestReprEntry(entry) for entry in entries]
+        #    result.longrepr.reprtraceback.reprentries = new_entries
 
         # If test was mandatory, session should fail immediately.
         if call.excinfo:

@@ -269,20 +269,14 @@ class TestFormattedLinesGenerator(object):
         assert list(formatted)[-2:] == expected[-2:]
 
 
-class TestPytestRuntestLogreport(object):
-    pass
+class TestReprEntryLinesFormatting(object):
+    """The pytest-datatest plugin uses the pytest_runtest_logreport()
+    hook to format the ReprEntry.lines for datatest.ValidationError
+    failures.
 
-
-class TestReprEntryReplacement(object):
-    """The pytest-datatest plugin uses a pytest_runtest_makereport()
-    hook wrapper to modify the printed error message when handling
-    datatest.ValidationError failures.
-
-    The plugin should automatically replace ReprEntry objects with
-    DatatestReprEntry objects. This will have the effect of removing
-    the "E" prefix from the difference rows shown in error messages.
+    This will have the effect of removing the "E" prefix from the
+    difference rows shown in error messages.
     """
-
     def test_simple_failure(self, testdir):
         """Test simple failure case."""
 
@@ -373,8 +367,8 @@ class TestTruncation(object):
             "            Invalid(6),",  # <- No "E" prefix!
             "            Invalid(7),",  # <- No "E" prefix!
             "            ...",          # <- No "E" prefix!
-            "E       ",
-            "E       ...Full output truncated, use '-vv' to show",
+            "        ",
+            "        ...Full output truncated, use '-vv' to show",
             "",
         ])
 
