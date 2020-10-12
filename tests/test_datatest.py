@@ -152,7 +152,67 @@ class TestDatatestReprEntry(object):
 
 
 class TestFindValidationErrorStart(object):
-    pass
+    def test_fully_qualified_class_name(self):
+        """First error line uses 'datatest.ValidationError'."""
+        lines = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       datatest.ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        position = _find_validationerror_start(lines)
+        assert position == 2, 'expects start at index 2'
+
+    def test_unqualified_class_name(self):
+        """First error line uses 'ValidationError'."""
+        lines = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        position = _find_validationerror_start(lines)
+        assert position == 2, 'expects start at index 2'
+
+    def test_no_validationerror_found(self):
+        """Check AssertionError, not ValidationError."""
+        lines = [
+            "    def test_foobar():",
+            ">       assert 'foo' == 'bar'",
+            "E       AssertionError: assert 'foo' == 'bar'",
+            "E         - bar",
+            "E         + foo",
+            "",
+            "test_script.py:42: AssertionError",
+        ]
+        position = _find_validationerror_start(lines)
+        assert position == -1, 'not found, should be -1'
+
+    def test_nested_validationerror_string(self):
+        """Check that there are no false positives for lines that look
+        like ValidationErrors but occur after the first line with a
+        fail_marker.
+        """
+        lines = [
+            r"    def test_bar():",
+            r">       assert 'foo' == '''",
+            r"    \b\b\b\bdatatest.ValidationError: invalid data (1 difference): [",
+            r"    '''",
+            r"E       AssertionError: assert 'foo' == '\n\x08\x08\x...ference): [\n'",
+            r"E         + foo",
+            r"E         - ",
+            r"E       datatest.ValidationError: invalid data (1 difference): [",
+            r"",
+            r"test_script.py:42: AssertionError",
+        ]
+        position = _find_validationerror_start(lines)
+        assert position == -1, 'not found, should be -1'
 
 
 class TestFormatReprEntryLines(object):

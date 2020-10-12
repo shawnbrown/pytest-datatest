@@ -31,6 +31,7 @@ the bundled version.
 
 import re
 from _pytest._code.code import ReprEntry
+from _pytest._code.code import FormattedExcinfo
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
@@ -174,8 +175,19 @@ class DatatestReprEntry(ReprEntry):
             self.reprfileloc.toterminal(tw)
 
 
+_fail_marker = FormattedExcinfo.fail_marker
+
+
 def _find_validationerror_start(lines):
-    pass
+    """Return the index in the list of *lines* where a ValidationError
+    begins. Return -1 if the no ValidationError is found.
+    """
+    for index, line in enumerate(lines):
+        if line.startswith(_fail_marker):
+            if _diff_start_regex.search(line) != None:
+                return index  # <- EXIT!
+            break  # Stop after 1st fail_marker regardless of match.
+    return -1
 
 
 def _format_reprentry_lines(lines, start):
