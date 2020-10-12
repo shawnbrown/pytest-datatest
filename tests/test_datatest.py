@@ -5,10 +5,8 @@ from _pytest._code.code import ReprEntry
 from _pytest._code.code import ReprFuncArgs
 from _pytest._code.code import ReprFileLocation
 
-from pytest_datatest import DatatestReprEntry
 from pytest_datatest import _find_validationerror_start
 from pytest_datatest import _formatted_lines_generator
-from pytest_datatest import pytest_runtest_logreport
 
 
 class DummyTerminalWriter(object):
@@ -21,134 +19,6 @@ class DummyTerminalWriter(object):
 
     def write(self, line, **kwds):
         self.all_lines.append((line, kwds))
-
-
-class TestDatatestReprEntry(object):
-    def test_instantiation(self):
-        lines = [
-            '    def test_foo():',
-            '>       assert 1 == 2',
-            'E       assert 1 == 2',
-        ]
-        reprfuncargs = ReprFuncArgs([])
-        reprlocals = None
-        reprfileloc = ReprFileLocation('test_script.py', 9, 'AssertionError')
-        style = 'long'
-
-        original = ReprEntry(
-            lines, reprfuncargs, reprlocals, reprfileloc, style)
-        wrapped = DatatestReprEntry(original)
-
-        assert isinstance(wrapped, ReprEntry), 'should derive from ReprEntry'
-        assert wrapped.lines == original.lines
-        assert wrapped.reprfuncargs == original.reprfuncargs
-        assert wrapped.reprlocals == original.reprlocals
-        assert wrapped.reprfileloc == original.reprfileloc
-        assert wrapped.style == original.style
-
-    def test_find_diff_start(self):
-        lines = [
-            '    def test_mydata(self):',
-            '>       datatest.validate(1, 2)',
-            'E       ValidationError: invalid data (1 difference): [',
-            'E           Deviation(-1, 2),',
-            'E       ]',
-            '',
-            'test_script.py:42: ValidationError',
-        ]
-        assert DatatestReprEntry._find_diff_start(lines) == 2, 'line index 2'
-
-    def test_find_diff_start_no_message(self):
-        lines = [
-            '    def test_mydata(self):',
-            '>       datatest.validate(1, 2)',
-            'E       ValidationError: 1 difference: [',  # <- Diff count only,
-            'E           Deviation(-1, 2),',             # no message.
-            'E       ]',
-            '',
-            'test_script.py:42: ValidationError',
-        ]
-        assert DatatestReprEntry._find_diff_start(lines) == 2, 'line index 2'
-
-    def test_find_diff_start_missing(self):
-        """When beginning of differences can not be found, return None."""
-        assert DatatestReprEntry._find_diff_start(['']) is None
-
-    def test_find_diff_stop(self):
-        lines = [
-            '    def test_mydata(self):',
-            '>       datatest.validate(1, 2)',
-            'E       ValidationError: invalid data (1 difference): [',
-            'E           Deviation(-1, 2),',
-            'E       ]',
-            '',
-            'test_script.py:42: ValidationError',
-        ]
-        msg = "First line after differences is empty string ('')."
-        assert DatatestReprEntry._find_diff_stop(lines) == 5, msg
-
-        lines = [
-            '    def test_mydata(self):',
-            '>       datatest.validate(a, b)',
-            'E       ValidationError: invalid data (4 differences): [',
-            'E           Invalid(1),',
-            'E           Invalid(2),',
-            'E           ...',  # <- Truncation is indicated with an ellipsis.
-            '',
-            'test_script.py:42: ValidationError',
-        ]
-        msg = 'Should detect truncated differences, too.'
-        assert DatatestReprEntry._find_diff_stop(lines) == 6, msg
-
-    def test_find_diff_stop_missing(self):
-        """When end of differences can not be found, return None."""
-        assert DatatestReprEntry._find_diff_stop(['']) is None
-
-    def test_toterminal(self):
-        """Should trim leading "E   " prefix for differences but still
-        print in red.
-        """
-        lines = [
-            '    def test_mydata(self):',
-            '>       datatest.validate(1, 2)',
-            'E       ValidationError: invalid data (1 difference): [',
-            'E           Deviation(-1, 2),',
-            'E       ]'
-        ]
-
-        original_entry = ReprEntry(
-            lines,
-            ReprFuncArgs([]),
-            None,
-            ReprFileLocation('test_script.py', 42, 'ValidationError'),
-            'long',
-        )
-
-        wrapped_entry = DatatestReprEntry(original_entry)
-
-        tw = DummyTerminalWriter()
-        wrapped_entry.toterminal(tw)  # <- Call method.
-
-        expected = [
-            ('    def test_mydata(self):',
-                {'bold': True, 'red': False}),
-            ('>       datatest.validate(1, 2)',
-                {'bold': True, 'red': False}),
-            ('E       ValidationError: invalid data (1 difference): [',
-                {'bold': True, 'red': True}),
-            ('            Deviation(-1, 2),',
-                {'bold': True, 'red': True}),
-            ('        ]',
-                {'bold': True, 'red': True}),
-            ('',
-                {}),
-            ('test_script.py',
-                {'bold': True, 'red': True}),
-            (':42: ValidationError',
-                {}),
-        ]
-
-        assert tw.all_lines == expected
 
 
 class TestFindValidationErrorStart(object):

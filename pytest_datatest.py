@@ -94,89 +94,9 @@ def pytest_collection_modifyitems(session, config, items):
     _idconfig_session_dict[id(config)] = session
 
 
-# Compile regex patterns to match error message text.
+# Compile regex pattern and get fail_marker.
 _diff_start_regex = re.compile(
     r'^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
-_diff_stop_regex = re.compile(r'^E\s+(?:\}|\]|\.\.\.)$')
-
-
-class DatatestReprEntry(ReprEntry):
-    """Wrapper for ReprEntry to change behavior of toterminal() method."""
-    def __init__(self, entry):
-        if not isinstance(entry, ReprEntry):
-            cls_name = entry.__class__.__name__
-            raise ValueError('expected ReprEntry, got {0}'.format(cls_name))
-
-        super(DatatestReprEntry, self).__init__(
-            getattr(entry, 'lines', []),
-            getattr(entry, 'reprfuncargs', None),
-            getattr(entry, 'reprlocals', None),
-            getattr(entry, 'reprfileloc', None),
-            getattr(entry, 'style', None),
-        )
-
-    @staticmethod
-    def _find_diff_start(lines):
-        """Returns index of line where ValidationError differences begin."""
-        for index, line in enumerate(lines):
-            if _diff_start_regex.search(line) is not None:
-                return index
-        return None
-
-    @staticmethod
-    def _find_diff_stop(lines):
-        """Returns index of line after ValidationError differences have
-        ended.
-        """
-        for index, line in enumerate(reversed(lines)):
-            if _diff_stop_regex.search(line) is not None:
-                return len(lines) - index
-        return None
-
-    def _writelines(self, tw):
-        """If row contains a difference item, trim the "E   " prefix
-        and indent with four spaces (but still print in red).
-        """
-        lines = list(self.lines)
-
-        diff_start = self._find_diff_start(lines)
-        diff_stop = self._find_diff_stop(lines)
-
-        if isinstance(diff_start, int) and isinstance(diff_stop, int):
-            lines[diff_start] = lines[diff_start].replace(
-                'datatest.ValidationError', 'ValidationError')
-
-            for index, line in enumerate(lines):
-                red = line.startswith('E   ')
-                if diff_start < index < diff_stop:
-                    line = ' ' + line[1:]  # Replace "E" prefix with space.
-                tw.line(line, bold=True, red=red)
-        else:
-            for line in lines:
-                red = line.startswith('E   ')
-                tw.line(line, bold=True, red=red)
-
-    def toterminal(self, tw):
-        if self.style == 'short':
-            self.reprfileloc.toterminal(tw)
-            self._writelines(tw)  # <- Calls tw.line() method.
-            return
-
-        if self.reprfuncargs:
-            self.reprfuncargs.toterminal(tw)
-
-        self._writelines(tw)  # <- Calls tw.line() method.
-
-        if self.reprlocals:
-            tw.line('')
-            self.reprlocals.toterminal(tw)
-
-        if self.reprfileloc:
-            if self.lines:
-                tw.line('')
-            self.reprfileloc.toterminal(tw)
-
-
 _fail_marker = FormattedExcinfo.fail_marker
 
 
@@ -264,17 +184,6 @@ def pytest_runtest_makereport(item, call):
             call.excinfo.value._truncation_notice = _truncation_notice
 
         outcome = yield
-
-        # Check for failure again--unittest-style failures only appear
-        # after `yield`.
-        #datafail = datafail or \
-        #    call.excinfo and call.excinfo.errisinstance(ValidationError)
-        #
-        #if datafail:
-        #    result = outcome.get_result()
-        #    entries = result.longrepr.reprtraceback.reprentries
-        #    new_entries = [DatatestReprEntry(entry) for entry in entries]
-        #    result.longrepr.reprtraceback.reprentries = new_entries
 
         # If test was mandatory, session should fail immediately.
         if call.excinfo:
