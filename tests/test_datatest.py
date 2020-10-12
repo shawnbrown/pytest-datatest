@@ -429,7 +429,6 @@ class TestXdistPlugin(object):
         result = passing_case.runpytest('-n', '1')
         result.assert_outcomes(passed=2, failed=0)
 
-    @pytest.mark.xfail
     def test_failing(self, failing_case):
         """Run failing cases with xdist option '-n 1'."""
         result = failing_case.runpytest('-n', '1')
