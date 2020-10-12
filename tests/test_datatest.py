@@ -6,6 +6,9 @@ from _pytest._code.code import ReprFuncArgs
 from _pytest._code.code import ReprFileLocation
 
 from pytest_datatest import DatatestReprEntry
+from pytest_datatest import _find_validationerror_start
+from pytest_datatest import _format_reprentry_lines
+from pytest_datatest import pytest_runtest_logreport
 
 
 class DummyTerminalWriter(object):
@@ -146,6 +149,18 @@ class TestDatatestReprEntry(object):
         ]
 
         assert tw.all_lines == expected
+
+
+class TestFindValidationErrorStart(object):
+    pass
+
+
+class TestFormatReprEntryLines(object):
+    pass
+
+
+class TestPytestRuntestLogreport(object):
+    pass
 
 
 class TestReprEntryReplacement(object):

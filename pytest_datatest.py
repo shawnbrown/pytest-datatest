@@ -174,6 +174,18 @@ class DatatestReprEntry(ReprEntry):
             self.reprfileloc.toterminal(tw)
 
 
+def _find_validationerror_start(lines):
+    pass
+
+
+def _format_reprentry_lines(lines, start):
+    pass
+
+
+def pytest_runtest_logreport(report):
+    pass
+
+
 def _should_truncate(line_count, char_count):
     return (line_count > DEFAULT_MAX_LINES) or (char_count > DEFAULT_MAX_CHARS)
 
