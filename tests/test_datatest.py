@@ -216,7 +216,57 @@ class TestFindValidationErrorStart(object):
 
 
 class TestFormatReprEntryLines(object):
-    pass
+    def test_formatting(self):
+        lines = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       datatest.ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        position = _find_validationerror_start(lines)
+        formatted = _format_reprentry_lines(lines, position)
+
+        expected = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            '            Deviation(-1, 2),',  # <- No "E" prefix!
+            '        ]',                      # <- No "E" prefix!
+            '',
+            'test_script.py:42: ValidationError',
+        ]
+        assert formatted == expected
+
+    def test_nongreedy_matching(self):
+        """Should stop removing `fail_marker` characters after the
+        first line without a matching `fail_marker`.
+        """
+        lines = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       datatest.ValidationError: invalid data (1 difference): [',
+            'E           Deviation(-1, 2),',
+            'E       ]',
+            '',
+            'Etest_script.py:42: ValidationError',  # <- Starts with fail_marker match!
+        ]
+        position = _find_validationerror_start(lines)
+        formatted = _format_reprentry_lines(lines, position)
+
+        expected = [
+            '    def test_mydata(self):',
+            '>       validate(1, 2)',
+            'E       ValidationError: invalid data (1 difference): [',
+            '            Deviation(-1, 2),',        # <- No "E" prefix!
+            '        ]',                            # <- No "E" prefix!
+            '',
+            'Etest_script.py:42: ValidationError',  # <- Should be unchanged!
+        ]
+        # Comparing the last two lines is enough.
+        assert formatted[-2:] == expected[-2:]
 
 
 class TestPytestRuntestLogreport(object):

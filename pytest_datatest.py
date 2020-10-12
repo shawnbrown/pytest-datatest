@@ -29,6 +29,7 @@ are installed, ``pytest_datatest`` is used in place of
 the bundled version.
 """
 
+import itertools
 import re
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import FormattedExcinfo
@@ -191,7 +192,27 @@ def _find_validationerror_start(lines):
 
 
 def _format_reprentry_lines(lines, start):
-    pass
+    """Format *lines* for a ValidationError at the given *start* index."""
+    beginning = lines[:start]
+    remaining = iter(lines[start:])
+    formatted = []
+
+    # Replace qualified name with unqualified name, leave first fail_marker.
+    fist_line = next(remaining)
+    fist_line = fist_line.replace(
+        'datatest.ValidationError', 'ValidationError', 1)
+    formatted.append(fist_line)
+
+    # Strip subsequent fail_marker characters.
+    for line in remaining:
+        if line.startswith(_fail_marker):
+            line = ' ' + line[1:]  # Replace "E" prefix with space.
+            formatted.append(line)
+        else:
+            formatted.append(line)
+            break  # Stop after first line without a fail_marker.
+
+    return list(itertools.chain(beginning, formatted, remaining))
 
 
 def pytest_runtest_logreport(report):
