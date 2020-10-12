@@ -7,7 +7,7 @@ from _pytest._code.code import ReprFileLocation
 
 from pytest_datatest import DatatestReprEntry
 from pytest_datatest import _find_validationerror_start
-from pytest_datatest import _format_reprentry_lines
+from pytest_datatest import _formatted_lines_generator
 from pytest_datatest import pytest_runtest_logreport
 
 
@@ -215,7 +215,7 @@ class TestFindValidationErrorStart(object):
         assert position == -1, 'not found, should be -1'
 
 
-class TestFormatReprEntryLines(object):
+class TestFormattedLinesGenerator(object):
     def test_formatting(self):
         lines = [
             '    def test_mydata(self):',
@@ -227,7 +227,7 @@ class TestFormatReprEntryLines(object):
             'test_script.py:42: ValidationError',
         ]
         position = _find_validationerror_start(lines)
-        formatted = _format_reprentry_lines(lines, position)
+        formatted = _formatted_lines_generator(lines, position)
 
         expected = [
             '    def test_mydata(self):',
@@ -238,7 +238,7 @@ class TestFormatReprEntryLines(object):
             '',
             'test_script.py:42: ValidationError',
         ]
-        assert formatted == expected
+        assert list(formatted) == expected
 
     def test_nongreedy_matching(self):
         """Should stop removing `fail_marker` characters after the
@@ -254,7 +254,7 @@ class TestFormatReprEntryLines(object):
             'Etest_script.py:42: ValidationError',  # <- Starts with fail_marker match!
         ]
         position = _find_validationerror_start(lines)
-        formatted = _format_reprentry_lines(lines, position)
+        formatted = _formatted_lines_generator(lines, position)
 
         expected = [
             '    def test_mydata(self):',
@@ -266,7 +266,7 @@ class TestFormatReprEntryLines(object):
             'Etest_script.py:42: ValidationError',  # <- Should be unchanged!
         ]
         # Comparing the last two lines is enough.
-        assert formatted[-2:] == expected[-2:]
+        assert list(formatted)[-2:] == expected[-2:]
 
 
 class TestPytestRuntestLogreport(object):

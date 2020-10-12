@@ -191,28 +191,37 @@ def _find_validationerror_start(lines):
     return -1
 
 
-def _format_reprentry_lines(lines, start):
-    """Format *lines* for a ValidationError at the given *start* index."""
-    beginning = lines[:start]
-    remaining = iter(lines[start:])
-    formatted = []
+def _formatted_lines_generator(lines, fail_index):
+    """Return a generator of formatted *lines* that contain a
+    ValidationError at the given *fail_index* position.
+
+    The resulting lines will have an unqualified class name (simply
+    "ValidationError") and the fail markers ("E") will be replaced
+    with spaces.
+    """
+    lines = iter(lines)
+
+    # Yield lines unchanged up to the given index position.
+    for line in itertools.islice(lines, 0, fail_index):
+        yield line
 
     # Replace qualified name with unqualified name, leave first fail_marker.
-    fist_line = next(remaining)
-    fist_line = fist_line.replace(
-        'datatest.ValidationError', 'ValidationError', 1)
-    formatted.append(fist_line)
+    fail_line = next(lines)
+    yield fail_line.replace('datatest.ValidationError', 'ValidationError', 1)
 
-    # Strip subsequent fail_marker characters.
-    for line in remaining:
+    # Yield error-lines replacing fail_marker with spaces.
+    marker_length = len(_fail_marker)
+    marker_spaces = ' ' * marker_length
+    for line in lines:
         if line.startswith(_fail_marker):
-            line = ' ' + line[1:]  # Replace "E" prefix with space.
-            formatted.append(line)
+            yield marker_spaces + line[marker_length:]  # <- Replace fail_marker.
         else:
-            formatted.append(line)
+            yield line
             break  # Stop after first line without a fail_marker.
 
-    return list(itertools.chain(beginning, formatted, remaining))
+    # Yield any remaining lines unchanged.
+    for line in lines:
+        yield line
 
 
 def pytest_runtest_logreport(report):
