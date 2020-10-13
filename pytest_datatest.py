@@ -31,7 +31,7 @@ the bundled version.
 
 import itertools
 import re
-from _pytest._code.code import ReprEntry
+from _pytest._code.code import ReprEntry as _ReprEntry
 from _pytest._code.code import FormattedExcinfo
 from _pytest._code.code import ExceptionChainRepr
 from _pytest._code.code import ExceptionRepr
@@ -40,13 +40,16 @@ from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
 from _pytest.assertion.truncate import USAGE_MSG
 from pytest import hookimpl
+from pytest import __version__ as _pytest_version
 from datatest import ValidationError
+
+
+PYTEST54 = _pytest_version[:3] == '5.4'
 
 if __name__ == 'pytest_datatest':
     from datatest._pytest_plugin import version_info as _bundled_version_info
 else:
     _bundled_version_info = (0, 0, 0)
-
 
 version = '0.1.4.dev0'
 version_info = (0, 1, 4)
@@ -146,6 +149,47 @@ def _formatted_lines_generator(lines, fail_index):
         yield line
 
 
+if PYTEST54:
+    class ReprEntry(_ReprEntry):
+        """Custom ReprEntry--USE ONLY WITH PYTEST 5.4.X VERSIONS."""
+        def __init__(self, reprentry):
+            self.lines = reprentry.lines
+            self.reprfuncargs = reprentry.reprfuncargs
+            self.reprlocals = reprentry.reprlocals
+            self.reprfileloc = reprentry.reprfileloc
+            self.style = reprentry.style
+
+        def _write_entry_lines(self, tw):
+            """This method is adapted from Pytest version 6.1.1."""
+
+            if not self.lines:
+                return
+
+            fail_marker = "{}   ".format(FormattedExcinfo.fail_marker)
+            indent_size = len(fail_marker)
+            indents = []
+            source_lines = []
+            failure_lines = []
+            for index, line in enumerate(self.lines):
+                is_failure_line = line.startswith(fail_marker)
+                if is_failure_line:
+                    # from this point on all lines are considered part of the failure
+                    failure_lines.extend(self.lines[index:])
+                    break
+                else:
+                    if self.style == "value":
+                        source_lines.append(line)
+                    else:
+                        indents.append(line[:indent_size])
+                        source_lines.append(line[indent_size:])
+
+            tw._write_source(source_lines, indents)
+
+            # failure lines are always completely red and bold
+            for line in failure_lines:
+                tw.line(line, bold=True, red=True)
+
+
 def _format_reprtraceback(reprtraceback):
     for reprentry in reprtraceback.reprentries:
         try:
@@ -162,6 +206,10 @@ def _format_reprtraceback(reprtraceback):
             if position != -1:
                 lines = _formatted_lines_generator(lines, position)
                 reprentry['lines'] = list(lines)
+
+    if PYTEST54:
+        reprtraceback.reprentries = \
+            [ReprEntry(entry) for entry in reprtraceback.reprentries]
 
 
 def pytest_runtest_logreport(report):
