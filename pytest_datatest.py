@@ -34,6 +34,7 @@ import re
 from _pytest._code.code import ReprEntry
 from _pytest._code.code import FormattedExcinfo
 from _pytest._code.code import ExceptionChainRepr
+from _pytest._code.code import ExceptionRepr
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
@@ -145,21 +146,39 @@ def _formatted_lines_generator(lines, fail_index):
         yield line
 
 
-def pytest_runtest_logreport(report):
-    """Hook to format the ReprEntry lines for ValidationErrors"""
-    if report.when != 'call' \
-            or not isinstance(report.longrepr, ExceptionChainRepr):
-        return  # <- EXIT!
-
-    for element_tuple in report.longrepr.chain:
-        reprtraceback = element_tuple[0]
-
-        for reprentry in reprtraceback.reprentries:
+def _format_reprtraceback(reprtraceback):
+    for reprentry in reprtraceback.reprentries:
+        try:
             lines = reprentry.lines
             position = _find_validationerror_start(lines)
             if position != -1:
                 lines = _formatted_lines_generator(lines, position)
                 reprentry.lines = list(lines)
+        except AttributeError:
+            # On pytest versions 3.3 through 3.6, sessions using `xdist`
+            # return `dict` instances instead of ReprEntry instances.
+            lines = reprentry['lines']
+            position = _find_validationerror_start(lines)
+            if position != -1:
+                lines = _formatted_lines_generator(lines, position)
+                reprentry['lines'] = list(lines)
+
+
+def pytest_runtest_logreport(report):
+    """Hook to format the ReprEntry lines for ValidationErrors"""
+
+    if report.when != 'call' or report.longrepr == None:
+        return
+
+    longrepr = report.longrepr
+    if isinstance(longrepr, ExceptionChainRepr):
+        for element_tuple in longrepr.chain:
+            reprtraceback = element_tuple[0]
+            _format_reprtraceback(reprtraceback)
+    elif isinstance(longrepr, ExceptionRepr):
+        _format_reprtraceback(longrepr.reprtraceback)
+    else:
+        pass  # Unknown type goes unmodified.
 
 
 def _should_truncate(line_count, char_count):
