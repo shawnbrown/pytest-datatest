@@ -219,7 +219,7 @@ def pytest_runtest_makereport(item, call):
                 item.session.shouldfail = shouldfail
 
     else:
-        outcome = yield
+        outcome = yield  # noqa: F841 (set flake8 to ignore)
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus):
