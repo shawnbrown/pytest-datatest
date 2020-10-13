@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from _pytest._code.code import ReprEntry
-from _pytest._code.code import ReprFuncArgs
-from _pytest._code.code import ReprFileLocation
-
 from pytest_datatest import _find_validationerror_start
 from pytest_datatest import _formatted_lines_generator
 
