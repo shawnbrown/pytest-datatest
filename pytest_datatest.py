@@ -32,8 +32,6 @@ the bundled version.
 import itertools
 import re
 import _pytest  # Non-public API.
-from _pytest._code.code import ExceptionChainRepr
-from _pytest._code.code import ExceptionRepr
 from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
@@ -222,14 +220,18 @@ def pytest_runtest_logreport(report):
         return
 
     longrepr = report.longrepr
-    if isinstance(longrepr, ExceptionChainRepr):
+    try:
+        # Try `chain` attribute (assuming ExceptionChainRepr).
         for element_tuple in longrepr.chain:
             reprtraceback = element_tuple[0]
             _format_reprtraceback(reprtraceback)
-    elif isinstance(longrepr, ExceptionRepr):
-        _format_reprtraceback(longrepr.reprtraceback)
-    else:
-        pass  # Unknown type goes unmodified.
+    except AttributeError:
+        try:
+            # Try `reprtraceback` attribute (assuming ExceptionRepr).
+            _format_reprtraceback(longrepr.reprtraceback)
+        except AttributeError:
+            # Unknown type goes unmodified.
+            pass
 
 
 def _should_truncate(line_count, char_count):
