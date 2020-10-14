@@ -44,7 +44,7 @@ from pytest import __version__ as _pytest_version
 from datatest import ValidationError
 
 
-PYTEST54 = _pytest_version[:3] == '5.4'
+PYTEST54 = str(_pytest_version[:3]) == '5.4'
 
 if __name__ == 'pytest_datatest':
     from datatest._pytest_plugin import version_info as _bundled_version_info
