@@ -32,7 +32,6 @@ the bundled version.
 import itertools
 import re
 import _pytest  # Non-public API.
-from _pytest._code.code import ReprEntry as _ReprEntry
 from _pytest._code.code import ExceptionChainRepr
 from _pytest._code.code import ExceptionRepr
 from _pytest.assertion.truncate import _should_truncate_item
@@ -153,7 +152,7 @@ def _formatted_lines_generator(lines, fail_index):
 
 
 if PYTEST54:
-    class ReprEntry(_ReprEntry):
+    class ReprEntry(_pytest._code.code.ReprEntry):
         """Custom ReprEntry--USE ONLY WITH PYTEST 5.4.X VERSIONS."""
         def __init__(self, reprentry):
             self.lines = reprentry.lines
