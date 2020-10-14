@@ -153,7 +153,7 @@ def _find_validationerror_start(lines):
     """
     for index, line in enumerate(lines):
         if line.startswith(_fail_marker):
-            if _diff_start_regex.search(line) != None:
+            if _diff_start_regex.search(line) is not None:
                 return index  # <- EXIT!
             break  # Stop after 1st fail_marker regardless of match.
     return -1
@@ -259,7 +259,7 @@ def _format_reprtraceback(reprtraceback):
 def pytest_runtest_logreport(report):
     """Hook to format the ReprEntry lines for ValidationErrors"""
 
-    if report.when != 'call' or report.longrepr == None:
+    if report.when != 'call' or report.longrepr is None:
         return
 
     longrepr = report.longrepr
