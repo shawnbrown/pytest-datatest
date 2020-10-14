@@ -37,12 +37,16 @@ from pytest import hookimpl
 from pytest import __version__ as _pytest_version
 from datatest import ValidationError
 
+def _warn_import_fallback(name):
+    message = 'could not import {0}; using fallback'.format(name)
+    warnings.warn(message, stacklevel=2)
+
 try:
     from _pytest.assertion.truncate import _should_truncate_item
 except ImportError:
     import os
 
-    warnings.warn('could not import _should_truncate_item; using fallback')
+    _warn_import_fallback('_should_truncate_item')
 
     def _should_truncate_item(item):  # Adapted from pytest 6.1.1.
         verbose = item.config.option.verbose
@@ -55,19 +59,19 @@ except ImportError:
 try:
     from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 except ImportError:
-    warnings.warn('could not import DEFAULT_MAX_LINES; using fallback')
+    _warn_import_fallback('DEFAULT_MAX_LINES')
     DEFAULT_MAX_LINES = 8  # Adapted from pytest 6.1.1.
 
 try:
     from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
 except ImportError:
-    warnings.warn('could not import DEFAULT_MAX_CHARS; using fallback')
+    _warn_import_fallback('DEFAULT_MAX_CHARS')
     DEFAULT_MAX_CHARS = 8 * 80  # Adapted from pytest 6.1.1.
 
 try:
     from _pytest.assertion.truncate import USAGE_MSG
 except ImportError:
-    warnings.warn('could not import USAGE_MSG; using fallback')
+    _warn_import_fallback('USAGE_MSG')
     USAGE_MSG = "use '-vv' to show"  # Adapted from pytest 6.1.1.
 
 PYTEST54 = str(_pytest_version[:3]) == '5.4'
