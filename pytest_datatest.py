@@ -31,8 +31,8 @@ the bundled version.
 
 import itertools
 import re
+import _pytest  # Non-public API.
 from _pytest._code.code import ReprEntry as _ReprEntry
-from _pytest._code.code import FormattedExcinfo
 from _pytest._code.code import ExceptionChainRepr
 from _pytest._code.code import ExceptionRepr
 from _pytest.assertion.truncate import _should_truncate_item
@@ -101,7 +101,10 @@ def pytest_collection_modifyitems(session, config, items):
 # Compile regex pattern and get fail_marker.
 _diff_start_regex = re.compile(
     r'^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
-_fail_marker = FormattedExcinfo.fail_marker
+try:
+    _fail_marker = _pytest._code.code.FormattedExcinfo.fail_marker
+except AttributeError:
+    _fail_marker = 'E'
 
 
 def _find_validationerror_start(lines):
@@ -165,7 +168,8 @@ if PYTEST54:
             if not self.lines:
                 return
 
-            fail_marker = "{}   ".format(FormattedExcinfo.fail_marker)
+            fail_marker = "{}   ".format(
+                _pytest._code.code.FormattedExcinfo.fail_marker)
             indent_size = len(fail_marker)
             indents = []
             source_lines = []
