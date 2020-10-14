@@ -32,7 +32,6 @@ the bundled version.
 import itertools
 import re
 import _pytest  # Non-public API.
-from _pytest.assertion.truncate import _should_truncate_item
 from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
 from _pytest.assertion.truncate import USAGE_MSG
@@ -40,6 +39,21 @@ from pytest import hookimpl
 from pytest import __version__ as _pytest_version
 from datatest import ValidationError
 
+try:
+    from _pytest.assertion.truncate import _should_truncate_item
+except ImportError:
+    import os
+    import warnings
+
+    warnings.warn('could not import _should_truncate_item; using fallback')
+
+    def _should_truncate_item(item):  # Adapted from pytest 6.1.1.
+        verbose = item.config.option.verbose
+        return verbose < 2 and not _running_on_ci()
+
+    def _running_on_ci():  # Adapted from pytest 6.1.1.
+        env_vars = ["CI", "BUILD_NUMBER"]
+        return any(var in os.environ for var in env_vars)
 
 PYTEST54 = str(_pytest_version[:3]) == '5.4'
 
