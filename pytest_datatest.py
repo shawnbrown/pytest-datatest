@@ -32,9 +32,9 @@ the bundled version.
 import itertools
 import re
 import warnings
+
+import pytest
 import _pytest  # Non-public API.
-from pytest import hookimpl
-from pytest import __version__ as _pytest_version
 from datatest import ValidationError
 
 def _warn_import_fallback(name):
@@ -74,7 +74,7 @@ except ImportError:
     _warn_import_fallback('USAGE_MSG')
     USAGE_MSG = "use '-vv' to show"  # Adapted from pytest 6.1.1.
 
-PYTEST54 = str(_pytest_version[:3]) == '5.4'
+PYTEST54 = str(pytest.__version__[:3]) == '5.4'
 
 if __name__ == 'pytest_datatest':
     from datatest._pytest_plugin import version_info as _bundled_version_info
@@ -274,7 +274,7 @@ def _should_truncate(line_count, char_count):
 _truncation_notice = '...Full output truncated, {0}'.format(USAGE_MSG)
 
 
-@hookimpl(tryfirst=True, hookwrapper=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Hook wrapper to replace ReprEntry instances for ValidationError
     exceptions and to handle failure of 'mandatory' tests.
