@@ -37,9 +37,11 @@ import pytest
 import _pytest  # Non-public API.
 from datatest import ValidationError
 
+
 def _warn_import_fallback(name):
     message = 'could not import {0}; using fallback'.format(name)
     warnings.warn(message, stacklevel=2)
+
 
 try:
     from _pytest.assertion.truncate import _should_truncate_item
@@ -56,11 +58,13 @@ except ImportError:
         env_vars = ["CI", "BUILD_NUMBER"]
         return any(var in os.environ for var in env_vars)
 
+
 try:
     from _pytest.assertion.truncate import DEFAULT_MAX_LINES
 except ImportError:
     _warn_import_fallback('DEFAULT_MAX_LINES')
     DEFAULT_MAX_LINES = 8  # Adapted from pytest 6.1.1.
+
 
 try:
     from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
@@ -68,21 +72,31 @@ except ImportError:
     _warn_import_fallback('DEFAULT_MAX_CHARS')
     DEFAULT_MAX_CHARS = 8 * 80  # Adapted from pytest 6.1.1.
 
+
 try:
     from _pytest.assertion.truncate import USAGE_MSG
 except ImportError:
     _warn_import_fallback('USAGE_MSG')
     USAGE_MSG = "use '-vv' to show"  # Adapted from pytest 6.1.1.
 
-PYTEST54 = str(pytest.__version__[:3]) == '5.4'
+
+try:
+    _fail_marker = _pytest._code.code.FormattedExcinfo.fail_marker
+except AttributeError:
+    warnings.warn('could not reference fail_marker; using fallback')
+    _fail_marker = 'E'
+
 
 if __name__ == 'pytest_datatest':
     from datatest._pytest_plugin import version_info as _bundled_version_info
 else:
     _bundled_version_info = (0, 0, 0)
 
+
 version = '0.1.4.dev0'
 version_info = (0, 1, 4)
+
+PYTEST54 = str(pytest.__version__[:3]) == '5.4'
 
 _idconfig_session_dict = {}  # Dictionary to store ``session`` reference.
 
@@ -131,10 +145,6 @@ def pytest_collection_modifyitems(session, config, items):
 # Compile regex pattern and get fail_marker.
 _diff_start_regex = re.compile(
     r'^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
-try:
-    _fail_marker = _pytest._code.code.FormattedExcinfo.fail_marker
-except AttributeError:
-    _fail_marker = 'E'
 
 
 def _find_validationerror_start(lines):
