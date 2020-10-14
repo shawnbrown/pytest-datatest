@@ -31,10 +31,8 @@ the bundled version.
 
 import itertools
 import re
+import warnings
 import _pytest  # Non-public API.
-from _pytest.assertion.truncate import DEFAULT_MAX_LINES
-from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
-from _pytest.assertion.truncate import USAGE_MSG
 from pytest import hookimpl
 from pytest import __version__ as _pytest_version
 from datatest import ValidationError
@@ -43,7 +41,6 @@ try:
     from _pytest.assertion.truncate import _should_truncate_item
 except ImportError:
     import os
-    import warnings
 
     warnings.warn('could not import _should_truncate_item; using fallback')
 
@@ -54,6 +51,24 @@ except ImportError:
     def _running_on_ci():  # Adapted from pytest 6.1.1.
         env_vars = ["CI", "BUILD_NUMBER"]
         return any(var in os.environ for var in env_vars)
+
+try:
+    from _pytest.assertion.truncate import DEFAULT_MAX_LINES
+except ImportError:
+    warnings.warn('could not import DEFAULT_MAX_LINES; using fallback')
+    DEFAULT_MAX_LINES = 8  # Adapted from pytest 6.1.1.
+
+try:
+    from _pytest.assertion.truncate import DEFAULT_MAX_CHARS
+except ImportError:
+    warnings.warn('could not import DEFAULT_MAX_CHARS; using fallback')
+    DEFAULT_MAX_CHARS = 8 * 80  # Adapted from pytest 6.1.1.
+
+try:
+    from _pytest.assertion.truncate import USAGE_MSG
+except ImportError:
+    warnings.warn('could not import USAGE_MSG; using fallback')
+    USAGE_MSG = "use '-vv' to show"  # Adapted from pytest 6.1.1.
 
 PYTEST54 = str(_pytest_version[:3]) == '5.4'
 
