@@ -55,7 +55,7 @@ except ImportError:
         return verbose < 2 and not _running_on_ci()
 
     def _running_on_ci():  # Adapted from pytest 6.1.1.
-        env_vars = ["CI", "BUILD_NUMBER"]
+        env_vars = ['CI', 'BUILD_NUMBER']
         return any(var in os.environ for var in env_vars)
 
 
@@ -208,7 +208,7 @@ if PYTEST54:
             if not self.lines:
                 return
 
-            fail_marker = "{}   ".format(
+            fail_marker = "{0}   ".format(
                 _pytest._code.code.FormattedExcinfo.fail_marker)
             indent_size = len(fail_marker)
             indents = []
