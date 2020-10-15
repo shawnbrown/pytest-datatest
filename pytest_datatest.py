@@ -93,8 +93,8 @@ else:
     _bundled_version_info = (0, 0, 0)
 
 
-version = '0.1.4'
-version_info = (0, 1, 4)
+version = '0.1.5.dev0'
+version_info = (0, 1, 5)
 
 PYTEST54 = str(pytest.__version__[:3]) == '5.4'
 

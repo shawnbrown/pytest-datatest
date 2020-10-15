@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='pytest-datatest',
-    version='0.1.4',
+    version='0.1.5.dev0',
     author='Shawn Brown',
     maintainer='Shawn Brown',
     license='MIT',
