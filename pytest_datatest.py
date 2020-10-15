@@ -147,21 +147,21 @@ _diff_start_regex = re.compile(
     r'^E\s+(?:datatest.)?ValidationError:.+\d+ difference[s]?.*: [\[{]$')
 
 
-def _find_validationerror_start(lines):
-    """Return the index in the list of *lines* where a ValidationError
-    begins. Return -1 if the no ValidationError is found.
+def _find_validationerror_position(lines):
+    """Return the index position where a ValidationError begins in the
+    given list of *lines*. Return -1 if no ValidationError is found.
     """
-    for index, line in enumerate(lines):
+    for position, line in enumerate(lines):
         if line.startswith(_fail_marker):
             if _diff_start_regex.search(line) is not None:
-                return index  # <- EXIT!
+                return position  # <- EXIT!
             break  # Stop after 1st fail_marker regardless of match.
     return -1
 
 
-def _formatted_lines_generator(lines, fail_index):
+def _formatted_lines_generator(lines, position):
     """Return a generator of formatted *lines* that contain a
-    ValidationError at the given *fail_index* position.
+    ValidationError at the given *position*.
 
     The resulting lines will have an unqualified class name (simply
     "ValidationError") and the fail markers ("E") will be replaced
@@ -170,7 +170,7 @@ def _formatted_lines_generator(lines, fail_index):
     lines = iter(lines)
 
     # Yield lines up to the given index position without changes.
-    for line in itertools.islice(lines, 0, fail_index):
+    for line in itertools.islice(lines, 0, position):
         yield line
 
     # Yield first failure-line, removing "datatest." and keeping fail_marker.
@@ -238,7 +238,7 @@ def _format_reprtraceback(reprtraceback):
     for reprentry in reprtraceback.reprentries:
         try:
             lines = reprentry.lines
-            position = _find_validationerror_start(lines)
+            position = _find_validationerror_position(lines)
             if position != -1:
                 lines = _formatted_lines_generator(lines, position)
                 reprentry.lines = list(lines)
@@ -246,7 +246,7 @@ def _format_reprtraceback(reprtraceback):
             # On pytest versions 3.3 through 3.6, sessions using `xdist`
             # return `dict` instances instead of ReprEntry instances.
             lines = reprentry['lines']
-            position = _find_validationerror_start(lines)
+            position = _find_validationerror_position(lines)
             if position != -1:
                 lines = _formatted_lines_generator(lines, position)
                 reprentry['lines'] = list(lines)

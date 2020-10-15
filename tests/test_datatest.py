@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from pytest_datatest import _find_validationerror_start
+from pytest_datatest import _find_validationerror_position
 from pytest_datatest import _formatted_lines_generator
 
 
@@ -17,7 +17,7 @@ class DummyTerminalWriter(object):
         self.all_lines.append((line, kwds))
 
 
-class TestFindValidationErrorStart(object):
+class TestFindValidationErrorPosition(object):
     def test_fully_qualified_class_name(self):
         """First error line uses 'datatest.ValidationError'."""
         lines = [
@@ -29,7 +29,7 @@ class TestFindValidationErrorStart(object):
             '',
             'test_script.py:42: ValidationError',
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         assert position == 2, 'expects start at index 2'
 
     def test_unqualified_class_name(self):
@@ -43,7 +43,7 @@ class TestFindValidationErrorStart(object):
             '',
             'test_script.py:42: ValidationError',
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         assert position == 2, 'expects start at index 2'
 
     def test_no_validationerror_found(self):
@@ -57,7 +57,7 @@ class TestFindValidationErrorStart(object):
             "",
             "test_script.py:42: AssertionError",
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         assert position == -1, 'not found, should be -1'
 
     def test_nested_validationerror_string(self):
@@ -77,7 +77,7 @@ class TestFindValidationErrorStart(object):
             r"",
             r"test_script.py:42: AssertionError",
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         assert position == -1, 'not found, should be -1'
 
 
@@ -92,7 +92,7 @@ class TestFormattedLinesGenerator(object):
             '',
             'test_script.py:42: ValidationError',
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         formatted = _formatted_lines_generator(lines, position)
 
         expected = [
@@ -119,7 +119,7 @@ class TestFormattedLinesGenerator(object):
             '',
             'Etest_script.py:42: ValidationError',  # <- Starts with fail_marker match!
         ]
-        position = _find_validationerror_start(lines)
+        position = _find_validationerror_position(lines)
         formatted = _formatted_lines_generator(lines, position)
 
         expected = [
