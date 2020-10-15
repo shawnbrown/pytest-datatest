@@ -169,25 +169,25 @@ def _formatted_lines_generator(lines, fail_index):
     """
     lines = iter(lines)
 
-    # Yield lines unchanged up to the given index position.
+    # Yield lines up to the given index position without changes.
     for line in itertools.islice(lines, 0, fail_index):
         yield line
 
-    # Replace qualified name with unqualified name, leave first fail_marker.
+    # Yield first failure-line, removing "datatest." and keeping fail_marker.
     fail_line = next(lines)
     yield fail_line.replace('datatest.ValidationError', 'ValidationError', 1)
 
-    # Yield error-lines replacing fail_marker with spaces.
+    # Yield subsequent failure-lines, replacing fail_marker with spaces.
     marker_length = len(_fail_marker)
     marker_spaces = ' ' * marker_length
     for line in lines:
         if line.startswith(_fail_marker):
-            yield marker_spaces + line[marker_length:]  # <- Replace fail_marker.
+            yield marker_spaces + line[marker_length:]  # <- Replaces fail_marker.
         else:
             yield line
-            break  # Stop after first line without a fail_marker.
+            break  # Stop checking for fail_marker after first line without a fail_marker.
 
-    # Yield any remaining lines unchanged.
+    # Yield any remaining lines without changes.
     for line in lines:
         yield line
 
