@@ -1,51 +1,53 @@
 
-=====================================
 Release Checklist for pytest_datatest
 =====================================
 
 1. Run full set of tox environment tests (not just the shorter subset
    used for most development work).
 
-2. Verify *version* argument in setup.py.
+2. Verify *version* argument in `setup.py`.
 
-3. Verify *version* and *version_info* variables in pytest_datatest.py.
+3. Verify *version* and *version_info* variables in `pytest_datatest.py`.
 
-4. Add release date to CHANGELOG and make sure it includes all notable changes.
+4. Add release date to `CHANGELOG` and make sure it includes all notable changes.
 
 5. Commit and push final changes to upstream repository.
 
-6. Remove all existing files in the dist/ folder.
+6. Make sure the packaging tools are up-to-date:
 
-7. Build new distributions:
+       pip install -U twine wheel setuptools
 
-   $ python setup.py sdist bdist_wheel
+7. Remove all existing files in the `dist/` folder.
 
-8. Upload source and wheel distributions to PyPI:
+8. Build new distributions:
 
-   $ twine upload dist/*
+       python setup.py sdist bdist_wheel
 
-9. Double check PyPI project page and test installation from PyPI.
+9. Upload source and wheel distributions to PyPI:
 
-10. Add a version-tag to the upstream development repository.
+       twine upload dist/*
 
-11. Bundle this version with the datatest package.
+10. Double check PyPI project page and test installation from PyPI.
+
+11. Add a version-tag to the upstream development repository.
+
+12. Bundle this version with the datatest package.
 
     In the datatest project's development repository, do the following:
 
-        * Copy the contents of "pytest_datatest.py" into the
-          "datatest/_pytest_plugin.py" file.
+    * Copy the contents of `pytest_datatest.py` into the
+      `datatest/_pytest_plugin.py` file.
+    * Commit this change with a comment like the one below:
 
-        * Commit this change with a comment like the one below:
+	      Update bundled pytest-datatest plugin to version X.X.X.
 
-            "Update bundled pytest-datatest plugin to version X.X.X."
-
-12. Iterate version number in repository to "X.X.X.dev0" so it is not
+13. Iterate version number in repository to `X.X.X.dev0` so it is not
     confused with the just-published release. Check the following files:
 
-    * setup.py
-    * pytest_datatest.py
+    * `setup.py`
+    * `pytest_datatest.py`
 
     Commit these changes with a comment like the one below:
 
-      Iterate version number to differentiate development version
-      from latest release.
+        Iterate version number to differentiate development version
+        from latest release.
